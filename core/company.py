@@ -1,7 +1,10 @@
 import click
-from core.utils import import_csv
+from core.utils import import_csv, split_department
 from core.client import Client
-from data.db import insert_client, get_client_by_name
+from core.employee import Employee
+from data.db import insert_client, get_client_by_name, get_employees
+
+from risk_model.deployment import predict
 
 @click.command()
 @click.option('-n', '--name', type=str, required=True)
@@ -10,9 +13,9 @@ from data.db import insert_client, get_client_by_name
 def add_client(name: str, input_type: str, file: str):
   csv_data = import_csv(file)
   for row in csv_data:
-    c = Client(row[0], row[1], row[2], row[3])
-    insert_client(c)
-  click.echo(get_client_by_name(name))
+    e = Employee(row[0], row[1], row[2], row[3])
+    insert_client(e)
+
 @click.command()
 @click.option('-c', '--client', type=str, required=True)
 @click.option('-cid', '--campaign-id', type=int)
@@ -22,7 +25,22 @@ def fetch_results(client: str, cid: int):
 @click.command()
 @click.option('-c', '--client', type=str, required=True)
 def classify(client: str) -> dict:
-  pass
+  if client != None: 
+    data = get_employees(client)
+    click.echo(data[0])
+    output = []
+    for row in data:
+      # Name, Lit Score, Seniority, Degree Type, Gender, Department_HR, Department_Engineering, Age
+      # TODO Check this out to see if it works
+      t = split_department(row[7])
+
+      department_HR = t[0]
+      department_IT = t[1]
+
+      output.append(predict(row[2], row[3], row[4], row[5], row[6], department_HR, department_IT, row[8])) 
+
+    return output
+  return None
 
 @click.command()
 @click.option('-c', '--client', type=str)

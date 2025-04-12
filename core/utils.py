@@ -27,3 +27,11 @@ def import_csv(file: str):
         for row in reader:
             data.append(row)
     return data
+
+def split_department(department): 
+    if department == "HR": 
+        return (1, 0)
+    elif department == "Engineering": 
+        return (0, 0)
+    else: 
+        return (0, 1)

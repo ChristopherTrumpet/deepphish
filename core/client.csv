@@ -1,0 +1,6 @@
+name,industry,contact_email,config_path
+Acme Corp,Technology,info@acmecorp.com,/etc/acme/config.yaml
+Beta Industries,Finance,contact@betaindustries.net,/opt/beta/config.json
+Gamma Solutions,Healthcare,support@gammasolutions.org,/usr/local/gamma/config.ini
+Delta Systems,Manufacturing,sales@deltasystems.co.uk,/var/delta/config.xml
+Epsilon Group,Retail,marketing@epsilongroup.com,/home/epsilon/config.txt
