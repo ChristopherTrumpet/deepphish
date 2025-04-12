@@ -1,4 +1,5 @@
 import click
+from utils import convert_markdown_to_pdf
 
 @click.command()
 @click.option('-c', '--client', type=str, required=True)
@@ -38,4 +39,3 @@ def get_report(client: str, cid: int, format: str):
 @click.option('-t', '--to', type=str, required=True)
 def send_report(client: str, cid: int, to: str):
   pass
-
