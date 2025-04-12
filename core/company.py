@@ -38,6 +38,9 @@ def classify(client: str) -> dict:
 
       output.append(predict(row[0], row[1], row[2], row[3], row[4], department_HR, department_IT, row[6])) 
 
+    return output
+  return None
+
 @click.command()
 @click.option('-c', '--client', type=str)
 def remove_client(client: str):
