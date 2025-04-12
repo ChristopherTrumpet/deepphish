@@ -27,16 +27,17 @@ def fetch_results(client: str, cid: int):
 def classify(client: str) -> dict:
   if client != None: 
     data = get_employees(client)
+    click.echo(data[0])
     output = []
     for row in data:
       # Name, Lit Score, Seniority, Degree Type, Gender, Department_HR, Department_Engineering, Age
       # TODO Check this out to see if it works
-      t = split_department(row[5])
+      t = split_department(row[6])
 
       department_HR = t[0]
       department_IT = t[1]
 
-      output.append(predict(row[0], row[1], row[2], row[3], row[4], department_HR, department_IT, row[6])) 
+      output.append(predict(row[1], row[2], row[3], row[4], row[5], department_HR, department_IT, row[7])) 
 
     return output
   return None

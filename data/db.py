@@ -9,6 +9,7 @@ def insert_client(client):
   con.commit()
 
 def insert_employee(emp):
+  # {name: []}
   with con:
     c.executemany('INSERT INTO employee (name, literacy_score, seniority, degree_type, gender, department, age)', emp)
 
@@ -17,7 +18,7 @@ def get_client_by_name(name):
   return c.fetchall()
 
 def get_employees(client):
-  pass
+  c.execute("SELECT * FROM employee WHERE client_name=:client", {'client': client.name})
 
 def get_templates():
   c.execute("")
@@ -25,14 +26,14 @@ def get_templates():
 c = con.cursor()
 
 c.execute("""CREATE TABLE IF NOT EXISTS client (
-            name text,
+            name text PRIMARY KEY,
             industry text,
             contact_email text,
             config_path text
             )""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS employee (
-            name text,
+            FOREIGN KEY (client_name) REFERENCES client(name), 
             literacy_score int, 
             seniority int, 
             degree_type int, 
@@ -40,7 +41,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS employee (
             department text,
             age text,
             risk_text text, 
-            risk_value int, 
+            risk_value float, 
           )""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS template (
