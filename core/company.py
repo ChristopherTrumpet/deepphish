@@ -1,6 +1,7 @@
 import click
 from core.utils import import_csv
 from core.client import Client
+from core.employee import Employee
 from data.db import insert_client, get_client_by_name
 
 @click.command()
@@ -10,7 +11,7 @@ from data.db import insert_client, get_client_by_name
 def add_client(name: str, input_type: str, file: str):
   csv_data = import_csv(file)
   for row in csv_data:
-    c = Client(row[0], row[1], row[2], row[3])
+    c = Employee(row[0], row[1], row[2], row[3])
     insert_client(c)
   click.echo(get_client_by_name(name))
 @click.command()
