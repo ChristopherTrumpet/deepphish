@@ -34,5 +34,6 @@ cli.add_command(classify)
 cli.add_command(list_clients)
 
 
+
 if __name__ == "__main__":
   cli()

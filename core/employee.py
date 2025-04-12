@@ -1,39 +1,17 @@
+import uuid
+
 class Employee:
 
-  def __init__(self, name, department, age, seniority):
-    self.name = name
+  def __init__(self, client_id, employee_name, employee_email, literacy_score, seniority, degree_type,
+                gender, department, age):
+    self.client_id = client_id
+    self.employee_id = str(uuid.uuid4())
+    self.employee_name = employee_name
+    self.email = employee_email
+    self.literacy_score = literacy_score
+    self.seniority = seniority
+    self.degree_type = degree_type
+    self.gender = gender
     self.department = department
     self.age = age
-    self.senority = seniority
-
-  @property
-  def name(self):
-    return self._name
-
-  @name.setter
-  def name(self, value):
-    self._name = value
-
-  @property
-  def department(self):
-    return self._department
-
-  @department.setter
-  def department(self, value):
-    self._department = value
-
-  @property
-  def age(self):
-    return self._age
-
-  @age.setter
-  def age(self, value):
-    self._age = value
-
-  @property
-  def seniority(self):
-    return self._seniority
-
-  @seniority.setter
-  def seniority(self, value):
-    self._seniority = value
+    
