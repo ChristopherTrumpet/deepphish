@@ -32,12 +32,12 @@ def classify(client: str) -> dict:
     for row in data:
       # Name, Lit Score, Seniority, Degree Type, Gender, Department_HR, Department_Engineering, Age
       # TODO Check this out to see if it works
-      t = split_department(row[6])
+      t = split_department(row[7])
 
       department_HR = t[0]
       department_IT = t[1]
 
-      output.append(predict(row[1], row[2], row[3], row[4], row[5], department_HR, department_IT, row[7])) 
+      output.append(predict(row[2], row[3], row[4], row[5], row[6], department_HR, department_IT, row[8])) 
 
     return output
   return None

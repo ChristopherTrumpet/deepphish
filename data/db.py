@@ -11,7 +11,7 @@ def insert_client(client):
 def insert_employee(emp):
   # {name: []}
   with con:
-    c.executemany('INSERT INTO employee (name, literacy_score, seniority, degree_type, gender, department, age)', emp)
+    c.executemany('INSERT INTO employee (name, email, literacy_score, seniority, degree_type, gender, department, age)', emp)
 
 def get_client_by_name(name):
   c.execute("SELECT * FROM client WHERE name=:name", {'name': name})
@@ -34,6 +34,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS client (
 
 c.execute("""CREATE TABLE IF NOT EXISTS employee (
             FOREIGN KEY (client_name) REFERENCES client(name), 
+            email text, 
             literacy_score int, 
             seniority int, 
             degree_type int, 
