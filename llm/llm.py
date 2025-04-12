@@ -97,60 +97,72 @@ def get_string_response(model_name, prompt):
 
 def modify_modelfile(difficulty):
     """
-    Modifies the Modelfile to use the specific llama3.2 configuration
-    for generating corporate email drafts with intentional errors and markers.
+    Creates the Modelfile content based on the specified difficulty level,
+    focusing on characteristics for simulation rather than direct labels.
+
+    Args:
+        difficulty (str): The desired difficulty ('easy', 'medium', 'hard').
+
+    Returns:
+        bool: True if successful, False otherwise.
     """
-    # Define the specific Modelfile content
-    if (difficulty.lower() == "easy"):
+    modelfile_content = ""
+    difficulty_lower = difficulty.lower()
+
+    if difficulty_lower == "easy":
         modelfile_content = """FROM llama3.2
 
-                            PARAMETER temperature 1
+                                PARAMETER temperature 1
 
-                            SYSTEM \"\"\"You are an AI tasked with generating corporate email drafts. Your specific task is to create an email notification for an employee regarding a required action, typically involving accessing a link (like a password reset or account update) Make this really easy for a human to detect as AI generated, with spelling mistakes and informal tone.
+                                SYSTEM \"\"\"You are an AI assistant helping write email drafts. You will receive data of an individual and tailor the email to that individual.
 
-                            Follow these rules STRICTLY:
-                            1.  **Start Marker:** The entire output MUST begin *exactly* with 'START' and nothing before it.
-                            2.  **End Marker:** The entire output MUST end *exactly* with `END` and nothing after it.
-                            3.  **Link Placeholder:** You MUST include the exact text `<LINK>` within the email body where the action URL would normally be placed. Do not modify this placeholder.
-                            4.  **Tone and Context:** The email's tone should be official and convey importance or urgency, simulating a communication from a company's IT department, HR, or an automated system. Mention things like "security update," "compliance requirement," "account verification," or "mandatory action" to enhance realism.
-                            5.  **Minor Spelling Errors:** Intentionally introduce three or four *minor* spelling mistakes (e.g., 'immediatly', 'requierd', 'acces', 'pasword', 'notifcation'). These should look like typos, not grammatical errors. Do *not* misspell common short words like 'the', 'is', 'a'.
-                            6.  **Content:** Generate only the email content between the start and end markers. Do not add explanations or preamble.
-                            7.  **Other fields:** Do NOT include any other fields such as '<Your Name>' or '<Support Email>', all fields must also have some generated content or name. The only empty field should be the <LINK>.
-                            \"\"\"
-                            """
-    elif (difficulty.lower() == "medium"):
+                                Generate an email with the following characteristics:
+                                - Tone: Attempt official tone, but allow some slightly informal or awkward phrasing. Use a generic greeting (e.g., "Dear User,").
+                                - Scenario: Present a common required action (e.g., password reset, update info).
+                                - Urgency: Include a call to action with some urgency.
+                                - Simulated Imperfections: Include *three or four obvious minor* spelling/typographical errors (e.g., 'immediatly', 'requierd', 'acces', 'notifcation').
+                                - Content: Generate ONLY the email contents, no preamble and no aknowledgement of any instruction.
+                                - Link Placeholder: Must include the exact text `<LINK>`.
+                                - Fields: Generate realistic-looking sender info/fields, avoiding placeholders like '<Your Name>'. `<LINK>` is the only placeholder.
+                                \"\"\"
+                                """
+    elif difficulty_lower == "medium":
         modelfile_content = """FROM llama3.2
 
-                            PARAMETER temperature 1
+                                PARAMETER temperature 1
 
-                            SYSTEM \"\"\"You are an AI tasked with generating corporate email drafts. Your specific task is to create an email notification for an employee regarding a required action, typically involving accessing a link (like a password reset or account update) Make this moderately hard for a human to detect as AI generated, with only a few spelling errors but formal tone.
+                                SYSTEM \"\"\"You are an AI assistant helping write email drafts. You will receive data of an individual and tailor the email to that individual.
 
-                            Follow these rules STRICTLY:
-                            1.  **Start Marker:** The entire output MUST begin *exactly* with 'START' and nothing before it.
-                            2.  **End Marker:** The entire output MUST end *exactly* with `END` and nothing after it.
-                            3.  **Link Placeholder:** You MUST include the exact text `<LINK>` within the email body where the action URL would normally be placed. Do not modify this placeholder.
-                            4.  **Tone and Context:** The email's tone should be official and convey importance or urgency, simulating a communication from a company's IT department, HR, or an automated system. Mention things like "security update," "compliance requirement," "account verification," or "mandatory action" to enhance realism.
-                            5.  **Minor Spelling Errors:** Intentionally introduce one or two *minor* spelling mistakes (e.g., 'immediatly', 'requierd', 'acces', 'pasword', 'notifcation'). These should look like typos, not grammatical errors. Do *not* misspell common short words like 'the', 'is', 'a'.
-                            6.  **Content:** Generate only the email content between the start and end markers. Do not add explanations or preamble.
-                            7.  **Other fields:** Do NOT include any other fields such as '<Your Name>' or '<Support Email>', all fields must also have some generated content or name. The only empty field should be the <LINK>.
-                            \"\"\"
-                            """
-    elif (difficulty.lower() == "hard"):
+                                Generate an email with the following characteristics:
+                                - Tone: Maintain a convincing official and professional tone throughout. Use a standard corporate greeting.
+                                - Scenario: Present a plausible required action (e.g., security update, policy acknowledgement, account verification).
+                                - Urgency: Convey a moderate sense of importance or a reasonable deadline.
+                                - Simulated Imperfections: Include *one or two subtle minor* spelling/typographical errors (e.g., 'immediatly', 'requierd'). These should look like genuine typos.
+                                - Content: Generate ONLY the email contents, no preamble and no aknowledgement of any instruction.
+                                - Link Placeholder: Must include the exact text `<LINK>`.
+                                - Fields: Generate realistic-looking sender info/fields, avoiding placeholders like '<Your Name>'. `<LINK>` is the only placeholder.
+                                \"\"\"
+                                """
+    elif difficulty_lower == "hard":
         modelfile_content = """FROM llama3.2
 
-                            PARAMETER temperature 1
+                                PARAMETER temperature 1
 
-                            SYSTEM \"\"\"You are an AI tasked with generating corporate email drafts. Your specific task is to create an email notification for an employee regarding a required action, typically involving accessing a link (like a password reset or account update) Make this impossible for a human to detect as AI generated, it must be totally convincing and real.
+                                SYSTEM \"\"\"You are an AI assistant helping write email drafts. You will receive data of an individual and tailor the email to that individual.
 
-                            Follow these rules STRICTLY:
-                            1.  **Start Marker:** The entire output MUST begin *exactly* with 'START' and nothing before it.
-                            2.  **End Marker:** The entire output MUST end *exactly* with `END` and nothing after it.
-                            3.  **Link Placeholder:** You MUST include the exact text `<LINK>` within the email body where the action URL would normally be placed. Do not modify this placeholder.
-                            4.  **Tone and Context:** The email's tone should be official and convey importance or urgency, simulating a communication from a company's IT department, HR, or an automated system. Mention things like "security update," "compliance requirement," "account verification," or "mandatory action" to enhance realism.
-                            5.  **Content:** Generate only the email content between the start and end markers. Do not add explanations or preamble.
-                            6.  **Other fields:** Do NOT include any other fields such as '<Your Name>' or '<Support Email>', all fields must also have some generated content or name. The only empty field should be the <LINK>.
-                            \"\"\"
-                            """
+                                Generate an email with the following characteristics:
+                                - Tone: Flawlessly official, professional, and contextually appropriate (e.g., IT, HR). Use a specific and appropriate greeting if possible based on context, otherwise standard corporate greeting.
+                                - Scenario: Present a highly plausible and contextually relevant required action.
+                                - Urgency: Convey a strong but believable sense of urgency or importance.
+                                - Simulated Imperfections: *No intentional spelling or grammar errors.* The email should be polished.
+                                - Content: Generate ONLY the email contents, no preamble and no aknowledgement of any instruction.
+                                - Link Placeholder: Must include the exact text `<LINK>`.
+                                - Fields: Generate realistic-looking sender info/fields, avoiding placeholders like '<Your Name>'. `<LINK>` is the only placeholder.
+                                \"\"\"
+                                """
+    else:
+        print(f"Error: Invalid difficulty level '{difficulty}'. Please use 'easy', 'medium', or 'hard'.")
+        return False # Indicate failure
 
     # Write the specific content directly to the Modelfile, overwriting it.
     try:
@@ -213,63 +225,12 @@ def prompt_internal(difficulty, data):
     #    The prompt now just needs the contextual data.
     prompt = f"Generate the email based on this context: {data}"
     raw_response = get_string_response(model_name, prompt)
-
-    if raw_response:
-        # 4. Extract content between <START>/<END> or *START*/*END* markers.
-        start_marker = None
-        end_marker = None
-        start_index = -1
-        end_index = -1
-
-        # --- Find start marker ---
-        try:
-            start_index = raw_response.index("<START>")
-            start_marker = "<START>"
-        except ValueError:
-            try:
-                start_index = raw_response.index("*START*")
-                start_marker = "*START*"
-            except ValueError:
-                # Neither start marker found
-                print("Error: Could not find <START> or *START* marker in the response.")
-                print(f"Raw response was:\n---\n{raw_response}\n---")
-                return None
-
-        # --- Find end marker (must occur *after* start marker) ---
-        try:
-            end_index = raw_response.index("<END>", start_index)
-            end_marker = "<END>"
-        except ValueError:
-            try:
-                end_index = raw_response.index("*END*", start_index)
-                end_marker = "*END*"
-            except ValueError:
-                # Neither end marker found after the start marker
-                print(f"Error: Found start marker '{start_marker}' but could not find <END> or *END* marker after it.")
-                print(f"Raw response was:\n---\n{raw_response}\n---")
-                return None
-
-        # --- Extract content if both markers were found correctly ---
-        if start_marker and end_marker and start_index != -1 and end_index != -1:
-            # Calculate the actual start position after the marker
-            actual_start_index = start_index + len(start_marker)
-            # Extract the content and strip leading/trailing whitespace
-            extracted_content = raw_response[actual_start_index:end_index].strip()
-            return extracted_content
-        else:
-            # This case should theoretically not be reached due to earlier checks
-            print("Error: Failed to determine valid start/end markers for extraction despite initial checks.")
-            print(f"Raw response was:\n---\n{raw_response}\n---")
-            return None
-
-    else:
-        print("Error: Failed to get response from the model.")
-        return None # Indicate failure in getting response
+    return raw_response
 
 def main():
     # Example usage:
     # The 'difficulty' variable is still here but doesn't affect the SYSTEM prompt anymore.
-    difficulty_level = "hard"
+    difficulty_level = "easy"
     context_data = "chris trumpet, Purdue Univeristy student in computer science, works at Envision Center for VR game development, has issues with Outlook authentication."
 
     email_output = prompt_internal(difficulty_level, context_data)
