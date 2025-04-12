@@ -1,5 +1,6 @@
 import click
 from core.campaign import launch
+from core.templates import create_template
 
 @click.group()
 def cli():
@@ -7,6 +8,7 @@ def cli():
   pass
 
 cli.add_command(launch)
+cli.add_command(create_template)
 
 if __name__ == "__main__":
   cli()
