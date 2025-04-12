@@ -18,8 +18,3 @@ def launch(client, template):
 @click.option('-cid', '--campaign-id', help="Stops the specified campaign", required=True, type=int)
 def stop_campaign():
   pass
-
-
-
-if __name__ == "__main__":
-  launch()
