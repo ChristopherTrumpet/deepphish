@@ -26,5 +26,3 @@ def predict(name, literacy_score, seniority, degree_type, gender, department_hr,
     str_classification = labels[classification]
 
     return name, str_classification, risk_value
-
-print(predict("Alex", 90, 0, 1, 1, 0, 0, 22)) 
