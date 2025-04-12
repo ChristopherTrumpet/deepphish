@@ -28,6 +28,20 @@ def get_employees(client):
 def get_templates():
   c.execute("")
 
+def print_me(): 
+
+  table_name = 'employee'
+
+  # Execute a SELECT query with a LIMIT clause to get the first few rows
+  num_rows = 5  # Change this number to see a different number of initial rows
+  c.execute(f"SELECT * FROM {table_name} LIMIT {num_rows}")
+
+  # Fetch the results
+  results = c.fetchall()
+
+  print(results)
+  
+
 c = con.cursor()
 
 c.execute("""CREATE TABLE IF NOT EXISTS client (
@@ -53,4 +67,5 @@ c.execute("""CREATE TABLE IF NOT EXISTS employee (
               risk_value REAL, 
               FOREIGN KEY(client_id) REFERENCES client(client_id)
           )""")
+
 

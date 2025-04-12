@@ -2,7 +2,7 @@ import click
 from core.utils import import_csv, split_department
 from core.client import Client
 from core.employee import Employee
-from data.db import insert_client, get_client_by_name, get_employees, insert_employee
+from data.db import insert_client, get_client_by_name, get_employees, insert_employee, print_me
 
 from risk_model.deployment import predict
 
@@ -22,6 +22,8 @@ def add_client(name: str, industry: str, email: str, config: str, input_type: st
   for row in csv_data:
     e = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
     insert_employee(e)
+
+  print_me()
 
 @click.command()
 @click.option('-c', '--client', type=str, required=True)
