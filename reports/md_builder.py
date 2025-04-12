@@ -6,7 +6,7 @@ from io import BytesIO
 from datetime import datetime
 
 # --- Configuration & Sample Data ---
-
+# IMPLEMENT DATA HERE FROM ACTUAL DATABASE
 def get_phishing_data():
     """
     Provides sample data for the phishing test report.
@@ -88,99 +88,157 @@ def generate_status_pie_chart(df):
 
 # --- Markdown Generation ---
 
-def create_markdown_table(df):
+def build_report_content_professional(data_df, chart_base64):
     """
-    Converts a pandas DataFrame to a Markdown formatted table.
-
+    Builds a professional and well-styled Markdown report for phishing test results.
+    
     Args:
-        df (pd.DataFrame): The DataFrame to convert.
+        data_df (pd.DataFrame): The phishing test results.
+        chart_base64 (str): Base64-encoded image of a chart visualization.
 
     Returns:
-        str: A Markdown formatted table string.
+        str: Formatted Markdown report.
     """
-    # Use pandas to_markdown for easy and well-formatted tables
-    # Requires the 'tabulate' library (`pip install tabulate`)
-    try:
-        return df.to_markdown(index=False)
-    except ImportError:
-        print("Warning: 'tabulate' library not found. Using basic markdown table.")
-        print("Install it for better tables: pip install tabulate")
-        # Fallback basic markdown generation
-        header = "| " + " | ".join(df.columns) + " |"
-        separator = "|-" + "-|".join(['-' * len(col) for col in df.columns]) + "-|"
-        body = "\n".join(["| " + " | ".join(map(str, row)) + " |" for row in df.values])
-        return f"{header}\n{separator}\n{body}"
-    except Exception as e:
-        print(f"Error creating markdown table: {e}")
-        return "Error generating table."
-
-
-def build_report_content(data_df, chart_base64):
-    """
-    Builds the full Markdown report string.
-
-    Args:
-        data_df (pd.DataFrame): The phishing test data.
-        chart_base64 (str): Base64 encoded string of the pie chart image.
-
-    Returns:
-        str: The complete Markdown report content.
-    """
-    report_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.now()
+    report_date_full = now.strftime("%B %d, %Y")
+    report_generated = now.strftime("%Y-%m-%d %H:%M:%S")
     total_tested = len(data_df)
+
+    if total_tested == 0:
+        return "# Phishing Simulation Report\n\n**No data available to generate the report.**"
+
+    # Summary metrics
     clicked = len(data_df[data_df['Status'].str.contains("Clicked Link", na=False)])
     reported = len(data_df[data_df['Status'] == 'Reported Phish'])
     ignored = len(data_df[data_df['Status'] == 'Ignored'])
     remediation_required = len(data_df[data_df['Status'] == 'Clicked Link - Remediation Required'])
 
-    # --- Start Building Markdown ---
-    markdown_content = []
+    # Percentages
+    clicked_pct = clicked / total_tested
+    reported_pct = reported / total_tested
+    ignored_pct = ignored / total_tested
 
-    markdown_content.append(f"# Phishing Security Test Report")
-    markdown_content.append(f"**Report Generated:** {report_date}\n")
+    # Determine next quarter for recommendation
+    current_quarter = (now.month - 1) // 3 + 1
+    next_quarter = 1 if current_quarter == 4 else current_quarter + 1
+    next_quarter_year = now.year if current_quarter < 4 else now.year + 1
 
-    markdown_content.append("## 1. Executive Summary")
-    markdown_content.append(
-        f"This report summarizes the results of the recent simulated phishing campaign. "
-        f"A total of **{total_tested}** employees were tested. "
-        f"Key findings include **{clicked}** employees clicking the simulated phishing link "
-        f"and **{reported}** employees reporting the email as suspicious. "
-        f"Currently, **{remediation_required}** employees require follow-up remediation actions."
+    # --- Report Assembly ---
+    md = []
+
+    # --- Cover / Header ---
+    md.append("# DeepPhish Simulation + Risk Assessment Report\n")
+    md.append(f"**Assessment Date:** {report_date_full}  ")
+    md.append(f"**Report Generated:** {report_generated}\n")
+    md.append("---")
+
+    # --- 1. Executive Summary ---
+    md.append("## 1. Executive Summary\n")
+    md.append(
+        f"This report presents the results of a phishing simulation exercise conducted on **{report_date_full}**. "
+        f"A total of **{total_tested}** employees were included in the test to evaluate their response to a simulated phishing threat.\n"
     )
-    markdown_content.append("---\n") # Horizontal Rule
+    md.append(f"- Clicked the link: {clicked} employees (**{clicked_pct:.1%}**)\n"
+              f"- Reported the phish: {reported} employees (**{reported_pct:.1%}**)\n"
+              f"- Ignored the email: {ignored} employees (**{ignored_pct:.1%}**)\n"
+              f"- Remediation needed: {remediation_required} employees\n")
+    md.append("\nThis data highlights both areas of strength and potential risks within the organization’s current awareness levels.\n")
 
-    # --- Visualization Section ---
-    markdown_content.append("## 2. Overall Results Visualization")
+    # --- 2. Visualization ---
+    md.append("## 2. Simulation Response Visualization\n")
     if chart_base64:
-        markdown_content.append("The following chart provides a visual breakdown of employee interactions:")
-        # Embed the base64 image directly into Markdown
-        markdown_content.append(f"![Phishing Results Summary](data:image/png;base64,{chart_base64})\n")
+        md.append("Below is a graphical representation of employee responses during the simulation:\n")
+        md.append(f"![Phishing response chart](data:image/png;base64,{chart_base64})\n")
     else:
-        markdown_content.append("*Chart generation failed. Please check logs.*\n")
+        md.append("_Chart unavailable. Please ensure the visualization step was completed correctly._\n")
 
-    markdown_content.append("---\n") # Horizontal Rule
+    # --- Page Break ---
+    md.append('<div style="page-break-before: always;"></div>\n')
 
-    # --- Detailed Results Table ---
-    markdown_content.append("## 3. Detailed Employee Results")
-    markdown_content.append("The table below lists individual employee interactions and status:")
-    markdown_content.append(create_markdown_table(data_df))
-    markdown_content.append("\n") # Add space after table
+    # --- 3. Detailed Results Table ---
+    md.append("## 3. Detailed Interaction Log\n")
+    md.append("The following table contains a log of all participants and their corresponding actions during the simulation.\n")
+    md.append(create_html_table_with_borders(data_df))
+    md.append("\n")
 
-    markdown_content.append("---\n") # Horizontal Rule
+    # --- Page Break (Optional) ---
+    md.append('<div style="page-break-before: always;"></div>\n')
 
-    # --- Recommendations Section ---
-    markdown_content.append("## 4. Recommendations")
-    markdown_content.append("Based on the results, the following actions are recommended:")
-    markdown_content.append("* Conduct targeted security awareness training for employees who clicked the link, focusing on identifying phishing indicators.")
-    markdown_content.append("* Acknowledge and commend employees who correctly reported the phishing attempt.")
-    markdown_content.append("* Review and potentially enhance email filtering rules to better detect similar threats.")
-    markdown_content.append("* Schedule follow-up phishing simulations to measure improvement over time.")
-    markdown_content.append("\n")
+    # --- 4. Analysis & Recommendations ---
+    md.append("## 4. Analysis & Strategic Recommendations\n")
+    md.append(
+        "This phishing simulation provides meaningful insights into the organization's readiness against social engineering threats. "
+        "Key findings and actionable recommendations are outlined below:\n"
+    )
+    md.append("- **Targeted Remediation Training**  \n"
+              f"  Provide mandatory training to the **{remediation_required}** employees who interacted with the phishing email. "
+              "Focus on spotting red flags, verifying sender legitimacy, and best practices for email handling.\n")
+    md.append("- **Positive Reinforcement & Recognition**  \n"
+              f"  Acknowledge the **{reported}** employees who correctly reported the phishing attempt. Recognition can increase motivation and awareness across the team.\n")
+    md.append("- **Technical Control Audit**  \n"
+              "  Review the effectiveness of current email filtering, anti-spoofing protocols (DMARC, DKIM, SPF), and threat detection systems to reduce phishing exposure.\n")
+    md.append(f"- **Ongoing Testing**  \n"
+              f"  Plan the next simulation for **Q{next_quarter} {next_quarter_year}**. Iterative testing improves long-term resilience and tracks security awareness progress.\n")
 
-    markdown_content.append("---\n")
-    markdown_content.append("*End of Report*")
+    # --- Footer ---
+    md.append("---")
+    md.append("_Report compiled by the DeepPhish for the ML@Purdue Hackathon!_")
 
-    return "\n".join(markdown_content)
+    return "\n".join(md)
+
+# Helper function assumed to exist (from previous script)
+def create_markdown_table(df):
+    # Placeholder: Replace with your actual table generation logic
+    try:
+        # Use pandas to_markdown for easy and well-formatted tables
+        # Requires the 'tabulate' library (`pip install tabulate`)
+        return df.to_markdown(index=False)
+    except ImportError:
+        print("Warning: 'tabulate' library not found for table generation.")
+        # Basic fallback
+        header = "| " + " | ".join(df.columns) + " |"
+        separator = "|-" + "-|".join(['-' * len(col) for col in df.columns]) + "-|"
+        body = "\n".join(["| " + " | ".join(map(str, row)) + " |" for row in df.itertuples(index=False)])
+        return f"{header}\n{separator}\n{body}"
+    except Exception as e:
+        print(f"Error creating markdown table: {e}")
+        return "Error generating table."
+
+def create_html_table_with_borders(df):
+    """
+    Creates an HTML table with visible borders for PDF rendering.
+    Args:
+        df (pd.DataFrame): DataFrame to convert.
+    Returns:
+        str: HTML table with styling.
+    """
+    # Basic table style with borders and padding
+    table_style = (
+        'style="border-collapse: collapse; width: 100%;"'
+    )
+    th_td_style = (
+        'style="border: 1px solid #000; padding: 6px; text-align: left;"'
+    )
+
+    html = [f'<table {table_style}>']
+
+    # Header
+    html.append("<thead><tr>")
+    for column in df.columns:
+        html.append(f'<th {th_td_style}>{column}</th>')
+    html.append("</tr></thead>")
+
+    # Body
+    html.append("<tbody>")
+    for _, row in df.iterrows():
+        html.append("<tr>")
+        for cell in row:
+            html.append(f'<td {th_td_style}>{cell}</td>')
+        html.append("</tr>")
+    html.append("</tbody>")
+
+    html.append("</table>")
+    return "\n".join(html)
 
 # --- Main Execution ---
 
@@ -208,7 +266,7 @@ def generate_report_file(filename="phishing_test_report.md"):
 
         # 3. Build Markdown Content
         print("Building Markdown content...")
-        report_markdown = build_report_content(phishing_data, chart_data)
+        report_markdown = build_report_content_professional(phishing_data, chart_data)
 
         # 4. Write to File
         print(f"Writing report to '{filename}'...")
@@ -224,9 +282,4 @@ def generate_report_file(filename="phishing_test_report.md"):
         print(f"\nAn error occurred during report generation: {e}")
 
 if __name__ == "__main__":
-    # Ensure the 'tabulate' library is installed for optimal table formatting
-    # pip install tabulate
     generate_report_file()
-    # You can specify a different filename:
-    # generate_report_file("Q2_Phishing_Results.md")
-

@@ -1,7 +1,6 @@
 import csv
 from markdown_pdf import MarkdownPdf
 from markdown_pdf import Section
-
 import os
 
 def convert_markdown_to_pdf(text: str):
@@ -18,6 +17,18 @@ def convert_markdown_to_pdf(text: str):
   rid = 10
   pdf.save(f"report-{rid}.pdf")
 
+def convert_md_file_to_pdf(markdown_filepath):
+  with open(markdown_filepath, 'r', encoding='utf-8') as f:
+    markdown_text = f.read()
+
+  pdf = MarkdownPdf(toc_level=2)
+  pdf.add_section(Section(markdown_text, toc=True))
+
+  pdf.meta["title"] = "CyberSecurity Analysis Report"
+  pdf.meta["author"] = "Pretext AI"
+
+  pdf.save("pdf_report.pdf")
+
 def import_csv(file: str):
     here = os.path.dirname(os.path.abspath(__file__))
     filename = os.path.join(here, file)
@@ -27,3 +38,9 @@ def import_csv(file: str):
         for row in reader:
             data.append(row)
     return data
+
+def main():
+  convert_md_file_to_pdf("../reports/phishing_test_report.md")
+
+if __name__ == "__main__":
+  main()

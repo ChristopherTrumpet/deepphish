@@ -1,6 +1,6 @@
 import click
 from core.utils import convert_markdown_to_pdf
-
+from core.reports import generate_report, generate_debrief, send_debrief, simulate_call, get_report, send_report
 @click.command()
 @click.option('-c', '--client', type=str, required=True)
 @click.option('-cid', '--campaign', type=int, required=True)
