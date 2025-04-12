@@ -2,6 +2,7 @@ import ollama
 import subprocess
 import json
 import os
+import datetime
 
 def check_ollama_running():
     """
@@ -234,6 +235,48 @@ def main():
     context_data = "chris trumpet, Purdue Univeristy student in computer science, works at Envision Center for VR game development, has issues with Outlook authentication."
 
     email_output = prompt_internal(difficulty_level, context_data)
+
+    if email_output:
+        try:
+            # --- Replace <LINK> placeholder with actual HTML link ---
+            url_to_insert = "https://www.google.com" # Make sure protocol is included
+            link_text = "link"
+            link_html = f'<a href="{url_to_insert}" style="color:blue; text-decoration:underline;">{link_text}</a>'
+            content_with_html_link = email_output.replace("<LINK>", link_html)
+
+            # --- Format content for HTML (e.g., replace newlines with <br>) ---
+            formatted_content = content_with_html_link.replace('\n', '<br>\n')
+
+            # --- Generate timestamp and filename ---
+            ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"email_{difficulty_level.lower()}_{ts}.html"
+
+            # --- Create HTML structure (using formatted content directly) ---
+            html_content = f"""<!DOCTYPE html>
+                                <html lang="en">
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                    <title>Simulated Email Notification ({difficulty_level})</title>
+                                    <style>
+                                        body {{ font-family: sans-serif; line-height: 1.6; padding: 20px; }}
+                                        /* Removed pre style */
+                                    </style>
+                                </head>
+                                <body>
+                                    <div>{formatted_content}</div>
+                                </body>
+                                </html>"""
+            
+            with open(filename, "w", encoding="utf-8") as f:
+                f.write(html_content)
+
+        except IOError as e:
+            print(f"Error: Could not write HTML file '{filename}': {e}")
+            return None
+        except Exception as e:
+            print(f"An unexpected error occurred during HTML file creation: {e}")
+            return None
 
     if email_output:
         print("-" * 20)
