@@ -1,8 +1,10 @@
+import uuid 
+
 class Client:
   """Client object"""
-
-  def __init__(self, name, industry, email, config):
+  def __init__(self, name, email, industry, config):
     self.name = name
+    self.client_id = str(uuid.uuid4())
     self.industry = industry
     self.email = email
     self.config = config
@@ -10,6 +12,9 @@ class Client:
   @property
   def name(self):
     return self._name
+  
+  def id(self):
+    return self._id
 
   @name.setter
   def name(self, value):
