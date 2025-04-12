@@ -285,11 +285,11 @@ def parse_email_subject_body(email_content):
 
     return subject, body
 
-def main():
+def main(difficulty_level, context_data):
     # Example usage:
     # The 'difficulty' variable is still here but doesn't affect the SYSTEM prompt anymore.
-    difficulty_level = "easy"
-    context_data = "chris trumpet, Purdue Univeristy student in computer science, works at Envision Center for VR game development, has issues with Outlook authentication."
+    #difficulty_level = "easy"
+    #context_data = "chris trumpet, Purdue Univeristy student in computer science, works at Envision Center for VR game development, has issues with Outlook authentication."
 
     email_output = prompt_internal(difficulty_level, context_data)
     subject_line, email_output = parse_email_subject_body(email_output)
@@ -350,12 +350,12 @@ def main():
 #
 # MATTHEW CALL THIS FUNCTION TO GET THE EMAIL
 #
-def get_phish_email():
+def get_phish_email(difficulty_level, context_data):
     """
     Calls main function, returns both the HTML body content and email subject line.
     """
 
-    subject_line, body_content = main()
+    subject_line, body_content = main(difficulty_level, context_data)
 
     print("Subject: " + subject_line)
     print("Body: " + body_content)
