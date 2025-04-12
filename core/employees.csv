@@ -1,21 +1,16 @@
-Employee Name,Department,Age,Company Seniority
-Alice Smith,Marketing,32,5
-Bob Johnson,Sales,45,12
-Charlie Brown,Engineering,28,2
-Diana Lee,Human Resources,51,18
-Ethan Davis,Finance,39,7
-Fiona Miller,Operations,25,1
-George Wilson,Marketing,48,15
-Hannah Moore,Engineering,31,4
-Ivy Taylor,Sales,22,0
-Jack Anderson,Finance,55,20
-Kelly White,Operations,36,9
-Liam Hall,Human Resources,29,3
-Mia Green,Marketing,41,10
-Noah Adams,Engineering,34,6
-Olivia Baker,Sales,49,16
-Peter Carter,Finance,27,1
-Quinn Roberts,Operations,53,19
-Riley Lewis,Human Resources,30,4
-Sophia Hill,Marketing,24,0
-Thomas Ward,Engineering,43,11
+client_name,employee_name,literacy_score,seniority,degree_type,gender,department,age
+Acme Corp,Alice Smith,95,3,Masters,Female,Engineering,30
+Beta Industries,Bob Johnson,88,7,Bachelors,Male,Finance,45
+Gamma Solutions,Charlie Brown,76,1,High School,Male,Marketing,22
+Delta Systems,Diana Lee,92,5,PhD,Female,Operations,38
+Epsilon Group,Ethan Williams,80,2,Associate,Male,Sales,27
+Acme Corp,Fiona Green,98,8,Masters,Female,Research,52
+Beta Industries,George Miller,85,4,Bachelors,Male,IT,35
+Gamma Solutions,Hannah Davis,70,6,High School,Female,Customer Service,41
+Delta Systems,Ian Garcia,90,3,PhD,Male,Engineering,31
+Epsilon Group,Jane Rodriguez,82,1,Associate,Female,Marketing,24
+Acme Corp,Kevin Wilson,94,7,Bachelors,Male,Finance,48
+Beta Industries,Linda Martinez,87,5,Masters,Female,Operations,39
+Gamma Solutions,Michael Anderson,78,2,High School,Male,Sales,29
+Delta Systems,Nancy Taylor,91,6,PhD,Female,Research,55
+Epsilon Group,Oliver Thomas,83,4,Associate,Male,IT,33
