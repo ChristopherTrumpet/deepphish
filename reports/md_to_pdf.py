@@ -17,7 +17,7 @@ def convert_markdown_to_pdf(text: str):
   rid = 10
   pdf.save(f"report-{rid}.pdf")
 
-def convert_md_file_to_pdf(markdown_filepath):
+def convert_md_file_to_pdf(markdown_filepath, output_name, output_dir=""):
   with open(markdown_filepath, 'r', encoding='utf-8') as f:
     markdown_text = f.read()
 
@@ -27,7 +27,10 @@ def convert_md_file_to_pdf(markdown_filepath):
   pdf.meta["title"] = "CyberSecurity Analysis Report"
   pdf.meta["author"] = "Pretext AI"
 
-  pdf.save("../reports/pdf_report.pdf")
+  if (output_dir):
+    pdf.save(f"{output_dir}/{output_name}.pdf")
+  else:
+    pdf.save(f"{output_name}.pdf")
 
 def import_csv(file: str):
     here = os.path.dirname(os.path.abspath(__file__))

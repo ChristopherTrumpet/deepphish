@@ -4,6 +4,7 @@ import os
 import base64
 from io import BytesIO
 from datetime import datetime
+import re
 
 # --- Configuration & Sample Data ---
 # IMPLEMENT DATA HERE FROM ACTUAL DATABASE
@@ -186,6 +187,103 @@ def build_report_content_professional(data_df, chart_base64):
 
     return "\n".join(md)
 
+def generate_individual_reports(output_dir: str = "individual_reports"):
+    """
+    Generates a personalized Markdown report file for each employee in the DataFrame.
+
+    Args:
+        data_df (pd.DataFrame): DataFrame containing employee phishing results.
+                                Must include columns like 'Employee Name' and 'Status'.
+        output_dir (str, optional): The directory where individual reports will be saved.
+                                    Defaults to "individual_reports".
+
+    Requires:
+        - pandas library (pip install pandas)
+    """
+    print(f"\nGenerating individual employee reports in directory: '{output_dir}'...")
+
+    data_df = get_phishing_data()
+
+    # Create the output directory if it doesn't exist
+    try:
+        os.makedirs(output_dir, exist_ok=True)
+    except OSError as e:
+        print(f"Error creating directory '{output_dir}': {e}")
+        return # Stop if directory cannot be created
+
+    if 'Employee Name' not in data_df.columns or 'Status' not in data_df.columns:
+        print("Error: DataFrame must contain 'Employee Name' and 'Status' columns.")
+        return
+
+    # --- Loop through each employee ---
+    for index, row in data_df.iterrows():
+        employee_name = row['Employee Name']
+        status = row['Status']
+        # Add other relevant fields if needed, e.g., row['Department']
+
+        # Sanitize employee name for use in filename
+        safe_filename_name = re.sub(r'[^\w\s-]', '', employee_name).strip().replace(' ', '_')
+        if not safe_filename_name: # Handle cases where name becomes empty after sanitizing
+            safe_filename_name = f"employee_{index}"
+        filename = f"{safe_filename_name}_phishing_report.md"
+        filepath = os.path.join(output_dir, filename)
+
+        # --- Build Personalized Markdown Content ---
+        md_content = []
+        report_date = datetime.now().strftime("%B %d, %Y")
+
+        md_content.append(f"# Personalized Phishing Simulation Results")
+        md_content.append(f"**Date:** {report_date}")
+        md_content.append(f"**Employee:** {employee_name}\n")
+        # Optional: md_content.append(f"**Department:** {row.get('Department', 'N/A')}\n") # Safely get department
+        md_content.append("---")
+
+        md_content.append(f"Dear {employee_name.split()[0]},") # Use first name
+        md_content.append("\nThis report summarizes your interaction during the recent phishing security simulation.\n")
+
+        # --- Personalized Status and Recommendation ---
+        md_content.append("## Your Result Summary\n")
+        if "Clicked Link" in status:
+            md_content.append(f"**Your Action:** You clicked the link in the simulated phishing email.")
+            md_content.append(f"**Status:** `{status}`") # Show full status like 'Remediation Required'
+            md_content.append("\n**Recommendation:** Clicking links in unexpected emails can expose sensitive data or install malware. We strongly recommend completing the assigned security awareness training module on identifying phishing attempts. Please reach out to IT Security if you have questions.")
+            # Optional: Add specific training link here
+            # md_content.append("\n[Link to Required Training Module](https://your-training-platform.com/phishing-module)")
+        elif status == 'Reported Phish':
+            md_content.append(f"**Your Action:** You correctly identified and reported the simulated phishing email.")
+            md_content.append(f"**Status:** `{status}`")
+            md_content.append("\n**Recommendation:** Excellent work! Reporting suspicious emails is crucial for protecting our organization. Your vigilance helps keep everyone safe. Thank you for following the correct procedure.")
+        elif status == 'Ignored':
+            md_content.append(f"**Your Action:** You did not interact with or report the simulated phishing email.")
+            md_content.append(f"**Status:** `{status}`")
+            md_content.append("\n**Recommendation:** While ignoring suspicious emails is better than clicking, the safest action is to report them using the official reporting channel (e.g., 'Report Phish' button or forwarding to security@yourcompany.com). This allows our security team to analyze potential threats.")
+        else: # Handle any other statuses
+            md_content.append(f"**Your Action:** Your interaction status was recorded as `{status}`.")
+            md_content.append("\n**Recommendation:** Please review general security best practices regarding email safety. If you have questions about this status, contact IT Security.")
+
+        md_content.append("\n---\n")
+
+        # --- General Tips ---
+        md_content.append("## General Security Reminders\n")
+        md_content.append("* **Verify Senders:** Always check the sender's email address carefully.")
+        md_content.append("* **Inspect Links:** Hover over links (without clicking!) to see the actual destination URL.")
+        md_content.append("* **Beware Urgency:** Phishing emails often create a false sense of urgency.")
+        md_content.append("* **Never Share Credentials:** Legitimate services will rarely ask for your password via email.")
+        md_content.append("* **When in Doubt, Report:** Use the official reporting method if an email seems suspicious.\n")
+
+        md_content.append("---\n")
+        md_content.append("_This is an automated report. Please contact IT Security with any questions._")
+
+        # --- Write the individual file ---
+        try:
+            with open(filepath, "w", encoding='utf-8') as f:
+                f.write("\n".join(md_content))
+            # Optional: print(f"Generated report for {employee_name} at {filepath}")
+        except Exception as e:
+            print(f"Error writing report for {employee_name} to '{filepath}': {e}")
+
+    print(f"Finished generating {len(data_df)} individual reports.")
+
 # Helper function assumed to exist (from previous script)
 def create_markdown_table(df):
     # Placeholder: Replace with your actual table generation logic
@@ -281,5 +379,10 @@ def generate_report_file(filename="phishing_test_report.md"):
     except Exception as e:
         print(f"\nAn error occurred during report generation: {e}")
 
-if __name__ == "__main__":
+
+def main():
     generate_report_file()
+    generate_individual_reports()
+
+if __name__ == "__main__":
+    main()
