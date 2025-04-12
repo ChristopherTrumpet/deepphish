@@ -1,5 +1,5 @@
 import click
-from utils import convert_markdown_to_pdf
+from core.utils import convert_markdown_to_pdf
 
 @click.command()
 @click.option('-c', '--client', type=str, required=True)
