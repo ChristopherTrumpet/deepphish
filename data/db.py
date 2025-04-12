@@ -5,7 +5,7 @@ con = sqlite3.connect(":memory:")
 
 def insert_client(client):
   with con:
-    c.execute("INSERT INTO client VALUES (:name,:client_id, :industry, :contact_email, :config_path)", {'name': client.name, 'client_id': client.client_id, 
+    c.execute("INSERT INTO client (name, client_id, industry, contact_email, config_path) VALUES (:name,:client_id, :industry, :contact_email, :config_path)", {'name': client.name, 'client_id': client.client_id, 
                                                                                                         'industry': client.industry, 'contact_email' : client.email, 
                                                                                                         'config_path' : client.config})
   con.commit()
@@ -13,9 +13,9 @@ def insert_client(client):
 def insert_employee(emp):
   # {name: []}
   with con:
-    c.execute('INSERT INTO employee (:client_id, :employee_id, :name, :email, :literacy_score, :seniority, :degree_type, :gender, :department, :age)', 
+    c.execute('INSERT INTO employee (client_id, employee_id, name, email, literacy_score, seniority, degree_type, gender, department, age, risk_text, risk_value) VALUES (:client_id, :employee_id, :name, :email, :literacy_score, :seniority, :degree_type, :gender, :department, :age, :risk_text, :risk_value)', 
               {'client_id': emp.client_id, 'employee_id': emp.employee_id, 'name': emp.employee_name, 'email': emp.email, 'literacy_score': emp.literacy_score, 'seniority': emp.seniority, 
-               'degree_type': emp.degree_type, 'gender': emp.gender, 'department': emp.department, 'age': emp.age})
+               'degree_type': emp.degree_type, 'gender': emp.gender, 'department': emp.department, 'age': emp.age, "risk_text": "Null", "risk_value": -1})
   con.commit()
 
 def get_client_by_name(name):
