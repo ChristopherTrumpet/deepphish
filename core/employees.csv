@@ -1,16 +1,16 @@
-client_name,employee_name,literacy_score,seniority,degree_type,gender,department,age
-Acme Corp,Alice Smith,95,3,Masters,Female,Engineering,30
-Beta Industries,Bob Johnson,88,7,Bachelors,Male,Finance,45
-Gamma Solutions,Charlie Brown,76,1,High School,Male,Marketing,22
-Delta Systems,Diana Lee,92,5,PhD,Female,Operations,38
-Epsilon Group,Ethan Williams,80,2,Associate,Male,Sales,27
-Acme Corp,Fiona Green,98,8,Masters,Female,Research,52
-Beta Industries,George Miller,85,4,Bachelors,Male,IT,35
-Gamma Solutions,Hannah Davis,70,6,High School,Female,Customer Service,41
-Delta Systems,Ian Garcia,90,3,PhD,Male,Engineering,31
-Epsilon Group,Jane Rodriguez,82,1,Associate,Female,Marketing,24
-Acme Corp,Kevin Wilson,94,7,Bachelors,Male,Finance,48
-Beta Industries,Linda Martinez,87,5,Masters,Female,Operations,39
-Gamma Solutions,Michael Anderson,78,2,High School,Male,Sales,29
-Delta Systems,Nancy Taylor,91,6,PhD,Female,Research,55
-Epsilon Group,Oliver Thomas,83,4,Associate,Male,IT,33
+client_name,employee_name,employee_email,literacy_score,seniority,degree_type,gender,department,age
+Acme Corp,Alice Smith,alice.smith@acmecorp.com,95,3,1,0,Engineering,30
+Beta Industries,Bob Johnson,bob.johnson@betaindustries.net,88,7,1,1,Finance,45
+Gamma Solutions,Charlie Brown,charlie.brown@gammasolutions.org,76,1,0,1,Marketing,22
+Delta Systems,Diana Lee,diana.lee@deltasystems.co.uk,92,5,1,0,IT,38
+Epsilon Group,Ethan Williams,ethan.williams@epsilongroup.com,80,2,1,1,Sales,27
+Acme Corp,Fiona Green,fiona.green@acmecorp.com,98,8,1,0,Engineering,52
+Beta Industries,George Miller,george.miller@betaindustries.net,85,4,1,1,IT,35
+Gamma Solutions,Hannah Davis,hannah.davis@gammasolutions.org,70,6,0,0,HR,41
+Delta Systems,Ian Garcia,ian.garcia@deltasystems.co.uk,90,3,1,1,Engineering,31
+Epsilon Group,Jane Rodriguez,jane.rodriguez@epsilongroup.com,82,1,1,0,Marketing,24
+Acme Corp,Kevin Wilson,kevin.wilson@acmecorp.com,94,7,1,1,Finance,48
+Beta Industries,Linda Martinez,linda.martinez@betaindustries.net,87,5,1,0,HR,39
+Gamma Solutions,Michael Anderson,michael.anderson@gammasolutions.org,78,2,0,1,IT,29
+Delta Systems,Nancy Taylor,nancy.taylor@deltasystems.co.uk,91,6,1,0,Engineering,55
+Epsilon Group,Oliver Thomas,oliver.thomas@epsilongroup.com,83,4,1,1,IT,33
