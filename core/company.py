@@ -1,27 +1,32 @@
 import click
-from core.utils import import_csv, split_department
-from core.client import Client
-from core.employee import Employee
-from data.db import insert_client, get_client_by_name, get_employees, insert_employee
-
+import uuid
 from risk_model.deployment import predict
+from data.db import DatabaseManager
+from core.utils import import_csv
 
 @click.command()
 @click.option('-n', '--name', type=str, required=True)
-@click.option('-id', '--industry', type=str, required=True)
-@click.option('-e', '--email', type=str,  required=True)
-@click.option('-c', '--config', type=str, required=True)
-@click.option('-it', '--input-type', type=click.Choice(['csv']), required=True)
+@click.option('-e', '--email', type=str, required=True)
+@click.option('-i', '--input-type', type=click.Choice(['csv']), required=True)
 @click.option('-f', '--file', type=str)
-def add_client(name: str, industry: str, email: str, config: str, input_type: str, file: str):
-  c = Client(name, industry, email, config)
-  csv_data = import_csv(file)
-  
-  insert_client(c)
+def add_client(name: str, email: str, input_type: str, file: str):
 
+  csv_data = []
+  if (input_type == "csv"):
+    csv_data = import_csv(file)
+
+  db_manager = DatabaseManager()
+  company_id = db_manager.create_company(name, email)
   for row in csv_data:
-    e = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
-    insert_employee(e)
+    employee_id = db_manager.add_employee_to_company(company_id, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+    if (employee_id):
+      click.echo(f"Employee added with ID: {employee_id}")
+      employee = db_manager.get_employee(employee_id)
+      if employee:
+          print(f"Retrieved employee: {employee}")
+  db_manager.close()
+  return company_id
+
 
 @click.command()
 @click.option('-c', '--client', type=str, required=True)
@@ -30,24 +35,13 @@ def fetch_results(client: str, cid: int):
   pass
 
 @click.command()
-@click.option('-c', '--client', type=str, required=True)
-def classify(client: str) -> dict:
-  if client != None: 
-    data = get_employees(client)
-    click.echo(data[0])
-    output = []
-    for row in data:
-      # Name, Lit Score, Seniority, Degree Type, Gender, Department_HR, Department_Engineering, Age
-      # TODO Check this out to see if it works
-      t = split_department(row[8])
-
-      department_HR = t[0]
-      department_IT = t[1]
-
-      output.append(predict(row[3], row[4], row[5], row[6], row[7], department_HR, department_IT, row[9])) 
-
-    return output
-  return None
+@click.option('-c', '--client-name', type=str, required=True)
+def classify(client_name: str) -> dict:
+  db_manager = DatabaseManager()
+  client_id = str(uuid.uuid4())
+  company = db_manager.get_company(client_id)
+  if company:
+    click.echo("Retrived company: {company}")
 
 @click.command()
 @click.option('-c', '--client', type=str)

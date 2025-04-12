@@ -1,56 +1,192 @@
 import sqlite3
-from core.client import Client
+import uuid
 
-con = sqlite3.connect(":memory:")
+class DatabaseManager:
+  def __init__(self, db_name=":memory:"):
+    self.db_name = db_name
+    self.db_name = db_name
+    self.conn = None
+    self.cursor = None
+    self.connect()
+    self._create_tables()
 
-def insert_client(client):
-  with con:
-    c.execute("INSERT INTO client VALUES (:name,:client_id, :industry, :contact_email, :config_path)", {'name': client.name, 'client_id': client.client_id, 
-                                                                                                        'industry': client.industry, 'contact_email' : client.email, 
-                                                                                                        'config_path' : client.config})
-  con.commit()
+  def connect(self):
+    """Connect to the SQLite database."""
+    self.conn = sqlite3.connect(self.db_name)
+    self.cursor = self.conn.cursor()
 
-def insert_employee(emp):
-  # {name: []}
-  with con:
-    c.execute('INSERT INTO employee (:client_id, :employee_id, :name, :email, :literacy_score, :seniority, :degree_type, :gender, :department, :age)', 
-              {'client_id': emp.client_id, 'employee_id': emp.employee_id, 'name': emp.employee_name, 'email': emp.email, 'literacy_score': emp.literacy_score, 'seniority': emp.seniority, 
-               'degree_type': emp.degree_type, 'gender': emp.gender, 'department': emp.department, 'age': emp.age})
-  con.commit()
+  def close(self):
+    """Close the database connection."""
+    if self.conn:
+      self.conn.close()
 
-def get_client_by_name(name):
-  c.execute("SELECT * FROM client WHERE name=:name", {'name': name})
-  return c.fetchall()
+  def _create_tables(self):
+    """Create the companies and employees tables if they don't exist."""
+    try:
+      self.cursor.execute("""
+        CREATE TABLE IF NOT EXISTS companies (
+          company_id TEXT PRIMARY KEY,
+          company_name TEXT,
+          contact_email TEXT
+        )
+      """)
+      self.cursor.execute("""
+        CREATE TABLE IF NOT EXISTS employees (
+          employee_id TEXT PRIMARY KEY,
+          employee_name TEXT,
+          client_id TEXT,
+          email TEXT,
+          literacy_score INTEGER,
+          seniority INTEGER,
+          degree_type INTEGER,
+          gender INTEGER,
+          department TEXT,
+          age TEXT,
+          risk_text TEXT,
+          risk_value REAL,
+          FOREIGN KEY (client_id) REFERENCES companies(company_id)
+        )
+      """)
+      self.conn.commit()
+    except sqlite3.Error as e:
+      print(f"Error creating tables: {e}")
 
-def get_employees(client):
-  c.execute("SELECT * FROM employee WHERE client_name=:client", {'client': client.name})
+  def create_company(self, company_name, contact_email):
+    """Create a new company."""
+    company_id = str(uuid.uuid4())
+    try:
+      self.cursor.execute("""
+        INSERT INTO companies (company_id, company_name, contact_email)
+        VALUES (?, ?, ?)
+      """, (company_id, company_name, contact_email))
+      self.conn.commit()
+      return company_id
+    except sqlite3.Error as e:
+      print(f"Error creating company: {e}")
+      return None
 
-def get_templates():
-  c.execute("")
+  def get_company(self, company_id):
+    """Retrieve a company by its ID."""
+    try:
+      self.cursor.execute("""
+        SELECT * FROM companies WHERE company_id = ?
+      """, (company_id,))
+      company_data = self.cursor.fetchone()
+      if company_data:
+        columns = [description[0] for description in self.cursor.description]
+        return dict(zip(columns, company_data))
+      return None
+    except sqlite3.Error as e:
+      print(f"Error retrieving company: {e}")
+      return None
 
-c = con.cursor()
+  def get_employee(self, employee_id):
+    """Retrieve an employee by their ID."""
+    try:
+      self.cursor.execute("""
+        SELECT * FROM employees WHERE employee_id = ?
+      """, (employee_id,))
+      employee_data = self.cursor.fetchone()
+      if employee_data:
+        columns = [description[0] for description in self.cursor.description]
+        return dict(zip(columns, employee_data))
+      return None
+    except sqlite3.Error as e:
+      print(f"Error retrieving employee: {e}")
+      return None
 
-c.execute("""CREATE TABLE IF NOT EXISTS client (
-            client_id text PRIMARY KEY, 
-            name text, 
-            industry text,
-            contact_email text,
-            config_path text
-            )""")
+  def update_employee(self, employee_id, employee_name=None, client_id=None, email=None,
+                      literacy_score=None, seniority=None, degree_type=None, gender=None,
+                      department=None, age=None, risk_text=None, risk_value=None):
+    """Update an existing employee's information."""
+    try:
+      update_fields = {}
+      if employee_name is not None:
+        update_fields['employee_name'] = employee_name
+      if client_id is not None:
+        update_fields['client_id'] = client_id
+      if email is not None:
+        update_fields['email'] = email
+      if literacy_score is not None:
+        update_fields['literacy_score'] = literacy_score
+      if seniority is not None:
+        update_fields['seniority'] = seniority
+      if degree_type is not None:
+        update_fields['degree_type'] = degree_type
+      if gender is not None:
+        update_fields['gender'] = gender
+      if department is not None:
+        update_fields['department'] = department
+      if age is not None:
+        update_fields['age'] = age
+      if risk_text is not None:
+        update_fields['risk_text'] = risk_text
+      if risk_value is not None:
+        update_fields['risk_value'] = risk_value
 
-c.execute("""CREATE TABLE IF NOT EXISTS employee (
-              employee_id TEXT PRIMARY KEY,
-              client_id TEXT,
-              name TEXT,
-              email TEXT,
-              literacy_score INTEGER,
-              seniority INTEGER,
-              degree_type INTEGER,
-              gender INTEGER,
-              department TEXT,
-              age TEXT,
-              risk_text TEXT,
-              risk_value REAL, 
-              FOREIGN KEY(client_id) REFERENCES client(client_id)
-          )""")
+      if not update_fields:
+        return True  # No fields to update
 
+      set_clause = ", ".join(f"{key} = ?" for key in update_fields)
+      values = list(update_fields.values())
+      values.append(employee_id)
+
+      self.cursor.execute(f"""
+        UPDATE employees
+        SET {set_clause}
+        WHERE employee_id = ?
+      """, tuple(values))
+      self.conn.commit()
+      return True
+
+    except sqlite3.Error as e:
+      print(f"Error updating employee: {e}")
+      return False
+
+  def add_employee_to_company(self, company_id, employee_name, email, literacy_score,
+                              seniority, degree_type, gender, department, age,
+                              risk_text=None, risk_value=None):
+    """Add a new employee to a specific company."""
+    employee_id = str(uuid.uuid4())
+    try:
+      self.cursor.execute("""
+          INSERT INTO employees (employee_id, employee_name, client_id, email,
+                                  literacy_score, seniority, degree_type, gender,
+                                  department, age, risk_text, risk_value)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      """, (employee_id, employee_name, company_id, email, literacy_score,
+            seniority, degree_type, gender, department, age, risk_text, risk_value))
+      self.conn.commit()
+      return employee_id
+    except sqlite3.Error as e:
+      print(f"Error adding employee to company: {e}")
+      return None
+
+  def delete_company(self, company_id):
+    """Delete a company and all associated employees."""
+    try:
+      # Delete associated employees first (optional, depends on requirements)
+      self.cursor.execute("""
+          DELETE FROM employees WHERE client_id = ?
+      """, (company_id,))
+      # Then delete the company
+      self.cursor.execute("""
+          DELETE FROM companies WHERE company_id = ?
+      """, (company_id,))
+      self.conn.commit()
+      return True
+    except sqlite3.Error as e:
+      print(f"Error deleting company: {e}")
+      return False
+
+  def remove_employee_from_company(self, employee_id):
+    """Remove an employee from their current company (set client_id to NULL)."""
+    try:
+      self.cursor.execute("""
+          UPDATE employees SET client_id = NULL WHERE employee_id = ?
+      """, (employee_id,))
+      self.conn.commit()
+      return True
+    except sqlite3.Error as e:
+      print(f"Error removing employee from company: {e}")
+      return False

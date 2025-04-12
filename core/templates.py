@@ -1,6 +1,5 @@
 import click
 
-from data.db import get_templates
 
 @click.command()
 @click.option('-n', '--name', type=str, required=True, help="Name of the template for identification")
@@ -16,7 +15,6 @@ def view_template(name: str):
 @click.command()
 @click.option('-cid', '--company-id', type=int, required=False)
 def list_templates(c_id):
-  get_templates()
   pass
 
 @click.command()
