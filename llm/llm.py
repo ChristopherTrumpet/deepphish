@@ -118,6 +118,7 @@ def modify_modelfile(difficulty):
                                 SYSTEM \"\"\"You are an AI assistant helping write email drafts. You will receive data of an individual and tailor the email to that individual.
 
                                 Generate an email with the following characteristics:
+                                - Start with a subjet line 'Subject: <subject>'
                                 - Tone: Attempt official tone, but allow some slightly informal or awkward phrasing. Use a generic greeting (e.g., "Dear User,").
                                 - Scenario: Present a common required action (e.g., password reset, update info).
                                 - Urgency: Include a call to action with some urgency.
@@ -135,6 +136,7 @@ def modify_modelfile(difficulty):
                                 SYSTEM \"\"\"You are an AI assistant helping write email drafts. You will receive data of an individual and tailor the email to that individual.
 
                                 Generate an email with the following characteristics:
+                                - Start with a subjet line 'Subject: <subject>'
                                 - Tone: Maintain a convincing official and professional tone throughout. Use a standard corporate greeting.
                                 - Scenario: Present a plausible required action (e.g., security update, policy acknowledgement, account verification).
                                 - Urgency: Convey a moderate sense of importance or a reasonable deadline.
@@ -152,6 +154,7 @@ def modify_modelfile(difficulty):
                                 SYSTEM \"\"\"You are an AI assistant helping write email drafts. You will receive data of an individual and tailor the email to that individual.
 
                                 Generate an email with the following characteristics:
+                                - Start with a subjet line 'Subject: <subject>'
                                 - Tone: Flawlessly official, professional, and contextually appropriate (e.g., IT, HR). Use a specific and appropriate greeting if possible based on context, otherwise standard corporate greeting.
                                 - Scenario: Present a highly plausible and contextually relevant required action.
                                 - Urgency: Convey a strong but believable sense of urgency or importance.
@@ -228,6 +231,60 @@ def prompt_internal(difficulty, data):
     raw_response = get_string_response(model_name, prompt)
     return raw_response
 
+def parse_email_subject_body(email_content):
+    """
+    Parses an email content string to extract the subject and body.
+
+    Args:
+        email_content (str): The raw email content, potentially including
+                             a "Subject: ..." line.
+
+    Returns:
+        tuple: A tuple containing (subject, body).
+               'subject' is the text after "Subject: " up to the newline,
+               or None if "Subject: " is not found.
+               'body' is the remainder of the content after the subject line,
+               or the original content if no subject is found. Returns (None, email_content) on error.
+    """
+    subject = None
+    body = email_content  # Default: body is the whole content if no subject found
+
+    try:
+        subject_marker = "Subject: "
+        # Find the starting position of "Subject: "
+        subject_start_index = email_content.find(subject_marker)
+
+        if subject_start_index != -1:
+            # Found the marker "Subject: "
+
+            # Calculate where the actual subject text begins
+            subject_text_start = subject_start_index + len(subject_marker)
+
+            # Find the end of the subject line (the next newline character)
+            subject_end_index = email_content.find('\n', subject_text_start)
+
+            if subject_end_index != -1:
+                # Found a newline after the subject text
+                subject = email_content[subject_text_start:subject_end_index].strip()
+                # The body starts after the newline character
+                # Use strip() to remove leading/trailing whitespace from the body
+                body = email_content[subject_end_index:].strip()
+            else:
+                # No newline found after "Subject: ", assume the rest is the subject
+                subject = email_content[subject_text_start:].strip()
+                body = "" # No body content left
+
+        # If subject_start_index was -1, subject remains None and body remains the original email_content
+
+    except Exception as e:
+        # Handle any unexpected errors during parsing
+        print(f"Error parsing subject/body: {e}")
+        # Reset to safe defaults in case of error
+        subject = None
+        body = email_content
+
+    return subject, body
+
 def main():
     # Example usage:
     # The 'difficulty' variable is still here but doesn't affect the SYSTEM prompt anymore.
@@ -235,6 +292,7 @@ def main():
     context_data = "chris trumpet, Purdue Univeristy student in computer science, works at Envision Center for VR game development, has issues with Outlook authentication."
 
     email_output = prompt_internal(difficulty_level, context_data)
+    subject_line, email_output = parse_email_subject_body(email_output)
 
     if email_output:
         try:
@@ -281,11 +339,28 @@ def main():
     if email_output:
         print("-" * 20)
         print("Difficulty Level:", difficulty_level)
-        print("Generated Phishing Email Content:")
-        print(email_output)
+        #print("Generated Phishing Email Content:")
+        #print(email_output)
         print("-" * 20)
     else:
         print("Failed to generate phishing email content.")
 
+    return subject_line, html_content
+
+#
+# MATTHEW CALL THIS FUNCTION TO GET THE EMAIL
+#
+def get_phish_email():
+    """
+    Calls main function, returns both the HTML body content and email subject line.
+    """
+
+    subject_line, body_content = main()
+
+    print("Subject: " + subject_line)
+    print("Body: " + body_content)
+
+    return subject_line, body_content
+
 if __name__ == "__main__":
-    main()
+    get_phish_email()

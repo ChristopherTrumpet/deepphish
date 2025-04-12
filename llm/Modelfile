@@ -5,6 +5,7 @@ FROM llama3.2
                                 SYSTEM """You are an AI assistant helping write email drafts. You will receive data of an individual and tailor the email to that individual.
 
                                 Generate an email with the following characteristics:
+                                - Start with a subjet line 'Subject: <subject>'
                                 - Tone: Attempt official tone, but allow some slightly informal or awkward phrasing. Use a generic greeting (e.g., "Dear User,").
                                 - Scenario: Present a common required action (e.g., password reset, update info).
                                 - Urgency: Include a call to action with some urgency.
