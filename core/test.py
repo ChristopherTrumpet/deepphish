@@ -1,19 +1,20 @@
 import requests
+import sys
 from datetime import datetime, timedelta
-import llm.llm
-
+sys.path.append('../llm')
+import llm
+import link
 
 url = "http://127.0.0.1:8000/start_campaign"
 
 # Dummy employee list
 employees = [
     {"name": "Alice Smith", "email": "mattmuell297@gmail.com"},
-    {"name": "Bob Johnson", "email": "mattmuell297@gmail.com"},
-    {"name": "Carol Davis", "email": "mattmuell297@gmail.com"},
+    {"name": "Alice Smith", "email": "gutobutkewitsch@gmail.com"}
 ]
 
 # Base schedule time
-base_time = datetime(2025, 4, 13, 15, 0, 0)
+base_time = datetime.now()
 
 # Campaign ID
 campaign_id = 42
@@ -22,12 +23,16 @@ campaign_id = 42
 email_jobs = []
 
 for i, employee in enumerate(employees):
+
+    subject, body = llm.get_phish_email("hard", "chris trumpet works at envision center at purdue university and has trouble with outlook account")
+    body.replace("<LINK>", link.get_unique_url(employees[0]["email"].split('@')[0]))
+
     email_jobs.append({
         "campaign_id": campaign_id,
         "receiver_email": employee["email"],
-        "subject": "Kickoff!",
-        "message": f"<b>Welcome, {employee['name']}!</b>\n" + llm.get_phish_email(),
-        "send_time": (base_time + timedelta(seconds=i*10)).isoformat(),
+        "subject": subject,
+        "message": body,
+        "send_time": (base_time + timedelta(seconds=(i+1)*10)).isoformat(),
         "html": True
     })
 

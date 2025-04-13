@@ -3,6 +3,7 @@ import subprocess
 import json
 import os
 import datetime
+import link
 
 def check_ollama_running():
     """
