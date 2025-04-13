@@ -31,9 +31,7 @@ def add_client(name: str, email: str, input_type: str, file: str):
           dept = (1,0)
         if (row[7] == "IT"):
           dept = (0,1)
-
         click.echo(row)
-
         name, classification, risk_value = predict(row[1], row[3], row[4], row[5], row[6], dept[0], dept[1], row[8])
         click.echo(f"name={name}, classification={classification}, risk={risk_value}")
 

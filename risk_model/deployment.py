@@ -11,11 +11,11 @@ def predict(name, literacy_score, seniority, degree_type, gender, department_hr,
 
     regressor = xgb.XGBRegressor()
 
-    classifier.load_model("/Users/chris/Development/hack/deepphish/risk_model/model_classifier.json")
+    classifier.load_model("risk_model\model_classifier.json")
 
-    regressor.load_model("/Users/chris/Development/hack/deepphish/risk_model/model_regressor.json")
+    regressor.load_model("risk_model\model_regressor.json")
 
-    X = np.array([literacy_score, seniority, degree_type, gender, department_hr, department_engineering, age]).reshape((1, 7))
+    X = np.array([literacy_score, seniority, degree_type, gender, department_hr, department_engineering, age], dtype=int).reshape((1, 7))
 
     classifier_prediciton = classifier.predict(X)
     regressor_prediction = regressor.predict(X)

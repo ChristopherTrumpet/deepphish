@@ -4,7 +4,6 @@ import uuid
 class DatabaseManager:
   def __init__(self, db_name=":memory:"):
     self.db_name = db_name
-    self.db_name = db_name
     self.conn = None
     self.cursor = None
     self.connect()
@@ -34,7 +33,7 @@ class DatabaseManager:
         CREATE TABLE IF NOT EXISTS employees (
           employee_id TEXT PRIMARY KEY,
           employee_name TEXT,
-          client_id TEXT,
+          company_id TEXT,
           email TEXT,
           literacy_score INTEGER,
           seniority INTEGER,
@@ -44,9 +43,31 @@ class DatabaseManager:
           age TEXT,
           risk_text TEXT,
           risk_value REAL,
-          FOREIGN KEY (client_id) REFERENCES companies(company_id)
+          FOREIGN KEY (company_id) REFERENCES companies(company_id)
         )
       """)
+
+      self.cursor.execute("""
+        CREATE TABLE IF NOT EXISTS campaigns (
+          company_id TEXT PRIMARY KEY REFERENCES companies(company_id),
+          company_name TEXT,
+          contact_email TEXT, 
+          type TEXT, 
+          start_time TEXT, 
+          status TEXT, 
+          description TEXT            
+          )                  
+      """)
+
+      self.cursor.execute("""
+        CREATE TABLE IF NOT EXISTS actions (
+                          
+                          
+                          
+                          )
+      """)
+
+      self.cursor.execute()
       self.conn.commit()
     except sqlite3.Error as e:
       print(f"Error creating tables: {e}")
@@ -114,7 +135,7 @@ class DatabaseManager:
     """Retrieve all employees belonging to a specific company."""
     try:
       self.cursor.execute("""
-          SELECT * FROM employees WHERE client_id = ?
+          SELECT * FROM employees WHERE company_id = ?
       """, (company_id,))
       employee_data_list = self.cursor.fetchall()
       if employee_data_list:
@@ -125,8 +146,24 @@ class DatabaseManager:
     except sqlite3.Error as e:
       print(f"Error retrieving employees for company {company_id}: {e}")
       return []
+  
+  def get_campaigns(self, company_id): 
+    """Retrieve all employees belonging to a specific company."""
+    try:
+      self.cursor.execute("""
+          SELECT * FROM campaigns WHERE company = ?
+      """, (company_id))
+      campaigns_list = self.cursor.fetchall()
+      if campaigns_list:
+        columns = [description[0] for description in self.cursor.description]
+        campaigns = [dict(zip(columns, campaign_data)) for campaign_data in campaigns_list]
+        return campaigns
+      return []
+    except sqlite3.Error as e:
+      print(f"Error retrieving employees for company {company_id}: {e}")
+      return []
 
-  def update_employee(self, employee_id, employee_name=None, client_id=None, email=None,
+  def update_employee(self, employee_id, employee_name=None, company_id=None, email=None,
                       literacy_score=None, seniority=None, degree_type=None, gender=None,
                       department=None, age=None, risk_text=None, risk_value=None):
     """Update an existing employee's information."""
@@ -134,8 +171,8 @@ class DatabaseManager:
       update_fields = {}
       if employee_name is not None:
         update_fields['employee_name'] = employee_name
-      if client_id is not None:
-        update_fields['client_id'] = client_id
+      if company_id is not None:
+        update_fields['company_id'] = company_id
       if email is not None:
         update_fields['email'] = email
       if literacy_score is not None:
@@ -181,7 +218,7 @@ class DatabaseManager:
     employee_id = str(uuid.uuid4())
     try:
       self.cursor.execute("""
-          INSERT INTO employees (employee_id, employee_name, client_id, email,
+          INSERT INTO employees (employee_id, employee_name, company_id, email,
                                   literacy_score, seniority, degree_type, gender,
                                   department, age, risk_text, risk_value)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -198,7 +235,7 @@ class DatabaseManager:
     try:
       # Delete associated employees first (optional, depends on requirements)
       self.cursor.execute("""
-          DELETE FROM employees WHERE client_id = ?
+          DELETE FROM employees WHERE company_id = ?
       """, (company_id,))
       # Then delete the company
       self.cursor.execute("""
@@ -211,13 +248,14 @@ class DatabaseManager:
       return False
 
   def remove_employee_from_company(self, employee_id):
-    """Remove an employee from their current company (set client_id to NULL)."""
+    """Remove an employee from their current company (set company_id to NULL)."""
     try:
       self.cursor.execute("""
-          UPDATE employees SET client_id = NULL WHERE employee_id = ?
+          UPDATE employees SET company_id = NULL WHERE employee_id = ?
       """, (employee_id,))
       self.conn.commit()
       return True
     except sqlite3.Error as e:
       print(f"Error removing employee from company: {e}")
       return False
+

@@ -1,10 +1,9 @@
-from faker import Faker 
+ 
 import pandas as pd 
 import numpy as np 
 import random
 from scipy.optimize import minimize
 
-fake = Faker() 
 
 def create_dummy_data(num_rows=10):
     data = []
