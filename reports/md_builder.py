@@ -32,33 +32,29 @@ def get_phishing_data():
     Provides sample data for the phishing test report.
     In a real scenario, this data would come from your testing platform or database.
     """
-    #db_manager = DatabaseManager()
-
-    #employees = db_manager.get_employees_by_company(company_id)
-    #print(employees)
 
     data = {
         'Employee Name': [
-            'Alice Smith', 'Bob Johnson', 'Charlie Brown', 'Diana Prince',
+            'Augusto', 'Matthew', 'Alice Smith', 'Bob Johnson', 'Charlie Brown', 'Diana Prince',
             'Ethan Hunt', 'Fiona Glenanne', 'George Constanza', 'Hannah Abbott',
             'Ian Malcolm', 'Jane Doe'
         ],
         'Status': [
-            'Clicked Link - Remediation Required', 'Reported Phish', 'Ignored', 'Clicked Link - Remediation Required',
+            'Clicked Link - Remediation Required', 'Clicked Link - Remediation Required', 'Clicked Link - Remediation Required', 'Reported Phish', 'Ignored', 'Clicked Link - Remediation Required',
             'Reported Phish', 'Reported Phish', 'Clicked Link - Remediation Complete', 'Ignored',
             'Clicked Link - Remediation Required', 'Reported Phish'
         ],
         'Department': [
-            'Sales', 'Engineering', 'Marketing', 'Sales',
+            'IT', 'Engineering', 'Sales', 'Engineering', 'Marketing', 'Sales',
             'Engineering', 'Marketing', 'Sales', 'Engineering',
             'Marketing', 'Sales'
         ],
         'Reported Date': [
-            None, '2025-04-10', None, None,
+            '2025-04-13', '2025-04-13', None, '2025-04-10', None, None,
             '2025-04-11', '2025-04-10', '2025-04-12', None,
             None, '2025-04-11'
         ]
-    }
+        }
     return pd.DataFrame(data)
 
 # --- Chart Generation ---
