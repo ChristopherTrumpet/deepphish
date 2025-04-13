@@ -2,7 +2,7 @@ import sqlite3
 import uuid
 
 class DatabaseManager:
-  def __init__(self, db_name=":memory:"):
+  def __init__(self, db_name="data.db"):
     self.db_name = db_name
     self.conn = None
     self.cursor = None
@@ -43,6 +43,7 @@ class DatabaseManager:
           age TEXT,
           risk_text TEXT,
           risk_value REAL,
+          actions TEXT,
           FOREIGN KEY (company_id) REFERENCES companies(company_id)
         )
       """)
@@ -50,10 +51,8 @@ class DatabaseManager:
       self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS campaigns (
           company_id TEXT PRIMARY KEY REFERENCES companies(company_id),
-          campaign_id TEXT, 
-          company_name TEXT,
-          company_email TEXT, 
-          type TEXT, 
+          campaign_id TEXT,  
+          campaign_name TEXT,
           start_time TEXT, 
           end_time TEXT, 
           status TEXT, 
@@ -61,36 +60,17 @@ class DatabaseManager:
           )                  
       """)
 
-      self.cursor.execute("""
-        CREATE TABLE IF NOT EXISTS actions (
-          campaign_id TEXT PRIMARY KEY REFERENCES campaigns(campaign_id), 
-          company_id TEXT PRIMARY KEY REFERENCEs ccompanies(company_id), 
-          company_name TEXT, 
-          company_email TEXT, 
-          type TEXT, 
-          start_time TEXT, 
-          end_time TEXT, 
-          status TEXT, 
-          description TEXT, 
-          UNIQUE (campaign_id, company_id)                       
-          )"""
-        )
-
-      self.cursor.execute()
       self.conn.commit()
     except sqlite3.Error as e:
       print(f"Error creating tables: {e}")
 
-  def create_campaign(self, company_name, company_email, type, start_time, end_time="None", status="scheduled", description=""): 
+
+  def create_campaign(self, company_id, campaign_name, start_time, end_time="None", status="scheduled", description=""): 
     campaign_id = str(uuid.uuid4())
 
-    self.cursor.execute("SELECT company_id from companies WHERE company_email = ? AND company_name = ?", (company_email, company_name))
-
-    company_id = self.cursor.fetchone()
-
     try:
-        self.cursor.execute("INSERT into campaigns (campaign_id, company_id, company_name, company_email, type, start_time, end_time, status, description) VALUES (?, ?, ? ,?, ?, ?, ?, ?, ?)",
-                             (campaign_id, company_id, company_name, company_email, type, start_time, end_time, status, description))
+        self.cursor.execute("INSERT into campaigns (campaign_id, company_id, campaign_name, start_time, end_time, status, description) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                             (campaign_id, company_id, campaign_name, start_time, end_time, status, description))
         self.conn.commit()
 
         
@@ -174,21 +154,36 @@ class DatabaseManager:
       print(f"Error retrieving employees for company {company_id}: {e}")
       return []
   
-  def get_campaigns(self, company_id): 
-    """Retrieve all employees belonging to a specific company."""
-    try:
-      self.cursor.execute("""
-          SELECT * FROM campaigns WHERE company = ?
-      """, (company_id))
-      campaigns_list = self.cursor.fetchall()
-      if campaigns_list:
-        columns = [description[0] for description in self.cursor.description]
-        campaigns = [dict(zip(columns, campaign_data)) for campaign_data in campaigns_list]
-        return campaigns
-      return []
-    except sqlite3.Error as e:
-      print(f"Error retrieving employees for company {company_id}: {e}")
-      return []
+  def get_campaigns(self, company_id):
+      """Retrieve all campaigns for a specific company."""
+      try:
+          self.cursor.execute("""
+              SELECT * FROM campaigns WHERE company_id=?
+          """, (company_id,))
+          campaigns_list = self.cursor.fetchall()
+          if campaigns_list:
+              columns = [description[0] for description in self.cursor.description]
+              campaigns = [dict(zip(columns, campaign_data)) for campaign_data in campaigns_list]
+              return campaigns
+          return []
+      except sqlite3.Error as e:
+          print(f"Error retrieving campaigns for company {company_id}: {e}")
+          return []
+
+  def get_campaign(self, company_id, campaign_name):
+      """Retrieve a specific campaign by company ID and campaign name."""
+      try:
+          self.cursor.execute("""
+              SELECT * FROM campaigns WHERE company_id = ? AND campaign_name = ?
+          """, (company_id, campaign_name))
+          campaign_data = self.cursor.fetchone()
+          if campaign_data:
+              columns = [description[0] for description in self.cursor.description]
+              return dict(zip(columns, campaign_data))
+          return None
+      except sqlite3.Error as e:
+          print(f"Error retrieving campaign: {e}")
+          return None
 
   def update_employee(self, employee_id, employee_name=None, company_id=None, email=None,
                       literacy_score=None, seniority=None, degree_type=None, gender=None,
@@ -237,6 +232,39 @@ class DatabaseManager:
     except sqlite3.Error as e:
       print(f"Error updating employee: {e}")
       return False
+
+  def update_campaign(self, company_id, campaign_name, start_time=None, end_time=None, status=None, description=None):
+      """Update an existing campaign's information."""
+      try:
+          update_fields = {}
+          if start_time is not None:
+              update_fields['start_time'] = start_time
+          if end_time is not None:
+              update_fields['end_time'] = end_time
+          if status is not None:
+              update_fields['status'] = status
+          if description is not None:
+              update_fields['description'] = description
+
+          if not update_fields:
+              return True  # No fields to update
+
+          set_clause = ", ".join(f"{key} = ?" for key in update_fields)
+          values = list(update_fields.values())
+          values.append(company_id)
+          values.append(campaign_name)
+
+          self.cursor.execute(f"""
+              UPDATE campaigns
+              SET {set_clause}
+              WHERE company_id = ? AND campaign_name = ?
+          """, tuple(values))
+          self.conn.commit()
+          return True
+
+      except sqlite3.Error as e:
+          print(f"Error updating campaign: {e}")
+          return False
 
   def add_employee_to_company(self, company_id, employee_name, email, literacy_score,
                               seniority, degree_type, gender, department, age,

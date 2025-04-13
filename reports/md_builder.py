@@ -5,14 +5,39 @@ import base64
 from io import BytesIO
 from datetime import datetime
 import re
+from data.db import DatabaseManager
+
+def columns_to_rows_loop(array_2d, column_indices):
+  """Selects specific columns and makes them rows in the output using a loop."""
+  if not array_2d or not array_2d[0]:
+    return []
+
+  num_rows_original = len(array_2d)
+  num_cols_original = len(array_2d[0])
+  output_array = []
+
+  for col_index in column_indices:
+    if 0 <= col_index < num_cols_original:
+      new_row = [array_2d[i][col_index] for i in range(num_rows_original)]
+      output_array.append(new_row)
+    else:
+      print(f"Warning: Column index {col_index} is out of bounds.")
+
+  return output_array
 
 # --- Configuration & Sample Data ---
 # IMPLEMENT DATA HERE FROM ACTUAL DATABASE
-def get_phishing_data():
+def get_phishing_data(company_id):
     """
     Provides sample data for the phishing test report.
     In a real scenario, this data would come from your testing platform or database.
     """
+    db_manager = DatabaseManager()
+
+    employees = db_manager.get_employees_by_company(company_id)
+    print(employees) 
+    return
+
     data = {
         'Employee Name': [
             'Alice Smith', 'Bob Johnson', 'Charlie Brown', 'Diana Prince',

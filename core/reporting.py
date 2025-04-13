@@ -1,11 +1,14 @@
 import click
-from core.utils import convert_markdown_to_pdf
+from reports.md_builder import get_phishing_data
+from data.db import DatabaseManager
 
 @click.command()
-@click.option('-c', '--client', type=str, required=True)
-@click.option('-cid', '--campaign', type=int, required=True)
-def generate_report(client: str, cid: int):
-  pass
+@click.option('-c', '--company-name', type=str, required=True)
+def generate_report(company_name: str):
+  db_manager = DatabaseManager()
+  company_id = db_manager.get_company_by_name(company_name)
+  get_phishing_data(company_id)
+  db_manager.close()
 
 @click.command()
 @click.option('-c', '--client', type=str, required=True)

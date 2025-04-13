@@ -1,9 +1,7 @@
 import click
-from core.campaign import launch, dashboard
 from core.templates import create_template, list_templates, delete_template, view_template
 from core.company import add_client, classify, remove_client, list_clients
-from core.campaign import create_campaign
-from core.reporting import generate_debrief, generate_report, send_debrief, simulate_call, get_report, send_report
+from core.campaign import create_campaign, start_campaign, dashboard
 from core.reporting import generate_debrief, generate_report, send_debrief, get_report, send_report
 
 @click.group()
@@ -12,7 +10,8 @@ def cli():
   pass
 
 # Campaigning
-cli.add_command(launch)
+cli.add_command(create_campaign)
+cli.add_command(start_campaign)
 cli.add_command(dashboard)
 
 # Reporting
@@ -37,8 +36,6 @@ cli.add_command(list_clients)
 
 # Campaign commands
 cli.add_command(create_campaign)
-
-
 
 if __name__ == "__main__":
   cli()
