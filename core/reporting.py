@@ -32,3 +32,10 @@ def get_report(client: str, cid: int, format: str):
 @click.option('-t', '--to', type=str, required=True)
 def send_report(client: str, cid: int, to: str):
   pass
+
+@click.command()
+@click.option('-c', '--client', type=str, required=True)
+@click.option('-cid', '--client', type=int, required=True)
+@click.option('-t', '--to', type=str, required=True)
+def simulate_call(client: str, cid: int, to: str):
+  pass
