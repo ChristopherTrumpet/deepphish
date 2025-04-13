@@ -24,18 +24,24 @@ def stop_campaign():
 
 @click.command()
 @click.option('--company-name')
-@click.option('--company-email')
 @click.option('--type')
 @click.option('--start-time')
 @click.option('--end-time')
 @click.option('--status')
 @click.option('--description')
-def create_campaign(company_name, company_email, type, start_time, end_time, status, description): 
+def create_campaign(company_name, type, start_time, end_time, status, description): 
   db_manager = DatabaseManager()
 
-  db_manager.create_campaign(company_name, company_email, type, start_time, end_time, status, description)
+  company_id = db_manager.get_company_by_name(company_name=company_name)
 
-  click.echo("Finished Creating Campaign!")
+  db_manager.create_campaign(company_id, type, start_time, end_time, status, description)
+
+  click.echo(get_campaigns(company_id))
+
+def get_campaigns(company_id): 
+  db_manager = DatabaseManager()
+
+  return db_manager.get_campaigns(company_id)
 
 @click.command()
 def dashboard():
