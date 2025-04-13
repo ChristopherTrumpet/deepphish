@@ -2,6 +2,7 @@ import click
 from core.campaign import launch
 from core.templates import create_template, list_templates, delete_template, view_template
 from core.company import add_client, classify, remove_client, list_clients
+from core.campaign import create_campaign
 from core.reporting import generate_debrief, generate_report, send_debrief, simulate_call, get_report, send_report
 
 @click.group()
@@ -32,6 +33,9 @@ cli.add_command(add_client)
 cli.add_command(remove_client)
 cli.add_command(classify)
 cli.add_command(list_clients)
+
+# Campaign commands
+cli.add_command(create_campaign)
 
 
 

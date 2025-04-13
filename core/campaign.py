@@ -1,4 +1,5 @@
 import click
+from data.db import DatabaseManager
 
 @click.command()
 @click.option('-c', '--client', help='Client for launching campaign', required=True, type=str)
@@ -18,3 +19,19 @@ def launch(client, template):
 @click.option('-cid', '--campaign-id', help="Stops the specified campaign", required=True, type=int)
 def stop_campaign():
   pass
+
+
+@click.command()
+@click.option('--company-name')
+@click.option('--company-email')
+@click.option('--type')
+@click.option('--start-time')
+@click.option('--end-time')
+@click.option('--status')
+@click.option('--description')
+def create_campaign(company_name, company_email, type, start_time, end_time, status, description): 
+  db_manager = DatabaseManager()
+
+  db_manager.create_campaign(company_name, company_email, type, start_time, end_time, status, description)
+
+  click.echo("Finished Creating Campaign!")

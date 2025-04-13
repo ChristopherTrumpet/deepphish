@@ -26,7 +26,7 @@ class DatabaseManager:
         CREATE TABLE IF NOT EXISTS companies (
           company_id TEXT PRIMARY KEY,
           company_name TEXT,
-          contact_email TEXT
+          company_email TEXT
         )
       """)
       self.cursor.execute("""
@@ -50,10 +50,12 @@ class DatabaseManager:
       self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS campaigns (
           company_id TEXT PRIMARY KEY REFERENCES companies(company_id),
+          campaign_id TEXT, 
           company_name TEXT,
-          contact_email TEXT, 
+          company_email TEXT, 
           type TEXT, 
           start_time TEXT, 
+          end_time TEXT, 
           status TEXT, 
           description TEXT            
           )                  
@@ -61,16 +63,41 @@ class DatabaseManager:
 
       self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS actions (
-                          
-                          
-                          
-                          )
-      """)
+          campaign_id TEXT PRIMARY KEY REFERENCES campaigns(campaign_id), 
+          company_id TEXT PRIMARY KEY REFERENCEs ccompanies(company_id), 
+          company_name TEXT, 
+          company_email TEXT, 
+          type TEXT, 
+          start_time TEXT, 
+          end_time TEXT, 
+          status TEXT, 
+          description TEXT, 
+          UNIQUE (campaign_id, company_id)                       
+          )"""
+        )
 
       self.cursor.execute()
       self.conn.commit()
     except sqlite3.Error as e:
       print(f"Error creating tables: {e}")
+
+  def create_campaign(self, company_name, company_email, type, start_time, end_time="None", status="scheduled", description=""): 
+    campaign_id = str(uuid.uuid4())
+
+    self.cursor.execute("SELECT company_id from companies WHERE company_email = ? AND company_name = ?", (company_email, company_name))
+
+    company_id = self.cursor.fetchone()
+
+    try:
+        self.cursor.execute("INSERT into campaigns (campaign_id, company_id, company_name, company_email, type, start_time, end_time, status, description) VALUES (?, ?, ? ,?, ?, ?, ?, ?, ?)",
+                             (campaign_id, company_id, company_name, company_email, type, start_time, end_time, status, description))
+        self.conn.commit()
+
+        
+        return campaign_id
+    except sqlite3.Error as e: 
+      print(f"Error creating campaign: {e}")
+      return None
 
   def create_company(self, company_name, contact_email):
     """Create a new company."""
