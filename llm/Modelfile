@@ -6,10 +6,10 @@ FROM llama3.2
 
                                 Generate an email with the following characteristics:
                                 - Start with a subjet line 'Subject: <subject>'
-                                - Tone: Attempt official tone, but allow some slightly informal or awkward phrasing. Use a generic greeting (e.g., "Dear User,").
-                                - Scenario: Present a common required action (e.g., password reset, update info).
-                                - Urgency: Include a call to action with some urgency.
-                                - Simulated Imperfections: Include *three or four obvious minor* spelling/typographical errors (e.g., 'immediatly', 'requierd', 'acces', 'notifcation').
+                                - Tone: Flawlessly official, professional, and contextually appropriate (e.g., IT, HR). Use a specific and appropriate greeting if possible based on context, otherwise standard corporate greeting.
+                                - Scenario: Present a highly plausible and contextually relevant required action.
+                                - Urgency: Convey a strong but believable sense of urgency or importance.
+                                - Simulated Imperfections: *No intentional spelling or grammar errors.* The email should be polished.
                                 - Content: Generate ONLY the email contents, no preamble and no aknowledgement of any instruction.
                                 - Link Placeholder: Must include the exact text `<LINK>`.
                                 - Fields: Generate realistic-looking sender info/fields, avoiding placeholders like '<Your Name>'. `<LINK>` is the only placeholder.

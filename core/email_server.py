@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
@@ -8,11 +9,14 @@ from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
 from datetime import datetime
 
-# === Default email account (can be overridden per job) ===
-DEFAULT_SENDER_EMAIL = "hazmatt.ai@gmail.com"
-DEFAULT_SENDER_PW = "dyluejusivgscksr"
+# Load variables from .env file
+load_dotenv()
+
+DEFAULT_SENDER_EMAIL = os.getenv("DEFAULT_SENDER_EMAIL")
+DEFAULT_SENDER_PW = os.getenv("DEFAULT_SENDER_PW")
 
 # === JobStore backed by SQLite for persistence ===
 app = FastAPI()
