@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 sys.path.append('../llm')
 import llm
 import link
-import random
 
 url = "http://127.0.0.1:8000/start_campaign"
 
