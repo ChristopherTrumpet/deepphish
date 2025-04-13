@@ -12,7 +12,7 @@ from datetime import datetime
 
 # === Default email account (can be overridden per job) ===
 DEFAULT_SENDER_EMAIL = "hazmatt.ai@gmail.com"
-DEFAULT_SENDER_PW = "zjxtbtxeyiggclai"
+DEFAULT_SENDER_PW = "dyluejusivgscksr"
 
 # === JobStore backed by SQLite for persistence ===
 app = FastAPI()
@@ -39,14 +39,12 @@ def send_email(**kwargs):
     mime_type = "html" if kwargs.get("html", False) else "plain"
     msg.attach(MIMEText(kwargs["message"], mime_type))
 
-    try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.ehlo(name="localhost")
-            server.login(sender_email, sender_pw)
-            server.send_message(msg)
-        print("Email sent successfully!")
-    except Exception as e:
-        print(f"Failed to send email: {e}")
+    #try:
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.ehlo(name="localhost")
+        server.login(DEFAULT_SENDER_EMAIL, DEFAULT_SENDER_PW)
+        server.send_message(msg)
+    print("Email sent successfully!")
 
 
 class EmailJob(BaseModel):
