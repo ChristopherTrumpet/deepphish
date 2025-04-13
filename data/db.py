@@ -80,6 +80,21 @@ class DatabaseManager:
       print(f"Error retrieving company: {e}")
       return None
 
+  def get_company_by_name(self, company_name):
+    """Retrieve a company by its name."""
+    try:
+      self.cursor.execute("""
+          SELECT * FROM companies WHERE company_name = ?
+      """, (company_name,))
+      company_data = self.cursor.fetchone()
+      if company_data:
+        columns = [description[0] for description in self.cursor.description]
+        return dict(zip(columns, company_data))
+      return None
+    except sqlite3.Error as e:
+      print(f"Error retrieving company: {e}")
+      return None
+
   def get_employee(self, employee_id):
     """Retrieve an employee by their ID."""
     try:
@@ -94,6 +109,22 @@ class DatabaseManager:
     except sqlite3.Error as e:
       print(f"Error retrieving employee: {e}")
       return None
+
+  def get_employees_by_company(self, company_id):
+    """Retrieve all employees belonging to a specific company."""
+    try:
+      self.cursor.execute("""
+          SELECT * FROM employees WHERE client_id = ?
+      """, (company_id,))
+      employee_data_list = self.cursor.fetchall()
+      if employee_data_list:
+        columns = [description[0] for description in self.cursor.description]
+        employees = [dict(zip(columns, employee_data)) for employee_data in employee_data_list]
+        return employees
+      return []
+    except sqlite3.Error as e:
+      print(f"Error retrieving employees for company {company_id}: {e}")
+      return []
 
   def update_employee(self, employee_id, employee_name=None, client_id=None, email=None,
                       literacy_score=None, seniority=None, degree_type=None, gender=None,
