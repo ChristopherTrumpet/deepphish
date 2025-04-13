@@ -6,6 +6,7 @@ from io import BytesIO
 from datetime import datetime
 import re
 from data.db import DatabaseManager
+import numpy as np
 
 def columns_to_rows_loop(array_2d, column_indices):
   """Selects specific columns and makes them rows in the output using a loop."""
@@ -24,6 +25,16 @@ def columns_to_rows_loop(array_2d, column_indices):
       print(f"Warning: Column index {col_index} is out of bounds.")
 
   return output_array
+
+def columns_to_rows_loop(array_2d, column_indices): 
+    np.array(array_2d)
+
+    modified = array_2d[:, column_indices]
+
+    return modified.T
+
+    
+    
 
 # --- Configuration & Sample Data ---
 # IMPLEMENT DATA HERE FROM ACTUAL DATABASE
