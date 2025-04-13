@@ -169,8 +169,32 @@ def build_report_content_professional(data_df, chart_base64):
     md.append(f"**Report Generated:** {report_generated}\n")
     md.append("---")
 
+    # --- 1. Embedded Supporting Document (NEW SECTION) ---
+    # This section attempts to embed a PDF.
+    # NOTE: Requires HTML support in the Markdown renderer (e.g., Pandoc with --self-contained or similar).
+    # NOTE: The path is hardcoded above - CHANGE IT FOR YOUR SYSTEM.
+    md.append("## 1. Supporting Document\n")
+
+    # Make sure this is defined earlier in your code:
+    # SUPPORTING_IMAGE_PATH = "/path/to/your/supporting_image.png"  # <<<--- USER MUST CHANGE THIS
+
+    SUPPORTING_IMAGE_PATH = "../risk_model/3d_risk_surface.png" # Example path
+
+    if os.path.exists(SUPPORTING_IMAGE_PATH):  # Correct variable name
+        md.append("The following image provides additional context or data for this assessment:\n")
+        md.append(f'<img src="{SUPPORTING_IMAGE_PATH}" alt="Supporting Document Image" style="max-width: 100%; height: auto;" />\n')
+        md.append(f"\n_Source: {os.path.basename(SUPPORTING_IMAGE_PATH)}_\n")
+    else:
+        md.append(f"_**Note:** The specified supporting image file was not found at the configured path:_\n")
+        md.append(f"`{SUPPORTING_IMAGE_PATH}`\n")
+        md.append("_It could not be embedded in the report._\n")
+
+    # --- Page Break After Image/Document ---
+    md.append('<div style="page-break-before: always;"></div>\n')
+
+
     # --- 1. Executive Summary ---
-    md.append("## 1. Executive Summary\n")
+    md.append("## 2. Executive Summary\n")
     md.append(
         f"This report presents the results of a phishing simulation exercise conducted on **{report_date_full}**. "
         f"A total of **{total_tested}** employees were included in the test to evaluate their response to a simulated phishing threat.\n"
@@ -182,7 +206,7 @@ def build_report_content_professional(data_df, chart_base64):
     md.append("\nThis data highlights both areas of strength and potential risks within the organization’s current awareness levels.\n")
 
     # --- 2. Visualization ---
-    md.append("## 2. Simulation Response Visualization\n")
+    md.append("## 3. Simulation Response Visualization\n")
     if chart_base64:
         md.append("Below is a graphical representation of employee responses during the simulation:\n")
         md.append(f"![Phishing response chart](data:image/png;base64,{chart_base64})\n")
@@ -193,7 +217,7 @@ def build_report_content_professional(data_df, chart_base64):
     md.append('<div style="page-break-before: always;"></div>\n')
 
     # --- 3. Detailed Results Table ---
-    md.append("## 3. Detailed Interaction Log\n")
+    md.append("## 4. Detailed Interaction Log\n")
     md.append("The following table contains a log of all participants and their corresponding actions during the simulation.\n")
     md.append(create_html_table_with_borders(data_df))
     md.append("\n")
@@ -202,7 +226,7 @@ def build_report_content_professional(data_df, chart_base64):
     md.append('<div style="page-break-before: always;"></div>\n')
 
     # --- 4. Analysis & Recommendations ---
-    md.append("## 4. Analysis & Strategic Recommendations\n")
+    md.append("## 5. Analysis & Strategic Recommendations\n")
     md.append(
         "This phishing simulation provides meaningful insights into the organization's readiness against social engineering threats. "
         "Key findings and actionable recommendations are outlined below:\n"
