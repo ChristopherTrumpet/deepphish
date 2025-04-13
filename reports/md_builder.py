@@ -165,11 +165,10 @@ def build_report_content_professional(data_df, chart_base64):
     SUPPORTING_IMAGE_PATH = "3d_risk_surface.png" # Example path
 
     if os.path.exists(SUPPORTING_IMAGE_PATH):
-        md.append("The following image provides additional context or data for this assessment:\n")
+        md.append("The following 3D Response Surface provides information on the correlation of several variables relating to your employee's pre-assessed risk:\n")
         
         # Use standard Markdown syntax
-        md.append(f"![Supporting Document Image]({SUPPORTING_IMAGE_PATH})\n")
-        md.append(f"\n_Source: {os.path.basename(SUPPORTING_IMAGE_PATH)}_\n")
+        md.append(f"![Response Surface]({SUPPORTING_IMAGE_PATH})\n")
     else:
         md.append("_**Note:** The specified supporting image file was not found at the configured path:_\n")
         md.append(f"`{SUPPORTING_IMAGE_PATH}`\n")
