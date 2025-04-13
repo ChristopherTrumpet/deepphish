@@ -25,7 +25,9 @@ email_jobs = []
 for i, employee in enumerate(employees):
 
     subject, body = llm.get_phish_email("hard", "chris trumpet works at envision center at purdue university and has trouble with outlook account")
-    body.replace("<LINK>", link.get_unique_url(employees[0]["email"].split('@')[0]))
+    body = body.replace("<LINK>", link.get_unique_url(employees[i]["email"].split('@')[0]))
+
+    print(body)
 
     email_jobs.append({
         "campaign_id": campaign_id,
@@ -38,7 +40,7 @@ for i, employee in enumerate(employees):
 
 # Optional: pretty print
 import json
-print(json.dumps(email_jobs, indent=2))
+#print(json.dumps(email_jobs, indent=2))
 
 response = requests.post(url, json=email_jobs)
 
