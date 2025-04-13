@@ -54,5 +54,4 @@ def create_campaign(company_name, company_email, type, start_time, end_time, sta
 
 @click.command()
 def dashboard():
-  dashboard_path = "../dashboard/"
-  nextjs_process = start_dash_server(dashboard_path)
+  nextjs_process = start_dash_server()

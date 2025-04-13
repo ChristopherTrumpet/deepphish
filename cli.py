@@ -3,7 +3,6 @@ from core.campaign import launch, dashboard
 from core.templates import create_template, list_templates, delete_template, view_template
 from core.company import add_client, classify, remove_client, list_clients
 from core.campaign import create_campaign
-from core.reporting import generate_debrief, generate_report, send_debrief, simulate_call, get_report, send_report
 from core.reporting import generate_debrief, generate_report, send_debrief, get_report, send_report
 
 @click.group()
@@ -19,7 +18,6 @@ cli.add_command(dashboard)
 cli.add_command(generate_debrief)
 cli.add_command(generate_report)
 cli.add_command(send_debrief)
-cli.add_command(generate_report)
 cli.add_command(get_report)
 cli.add_command(send_report)
 
@@ -37,8 +35,6 @@ cli.add_command(list_clients)
 
 # Campaign commands
 cli.add_command(create_campaign)
-
-
 
 if __name__ == "__main__":
   cli()
