@@ -84,7 +84,7 @@ class DatabaseManager:
     company_id = str(uuid.uuid4())
     try:
       self.cursor.execute("""
-        INSERT INTO companies (company_id, company_name, contact_email)
+        INSERT INTO companies (company_id, company_name, company_email)
         VALUES (?, ?, ?)
       """, (company_id, company_name, contact_email))
       self.conn.commit()
