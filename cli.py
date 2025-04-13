@@ -37,7 +37,5 @@ cli.add_command(list_clients)
 # Campaign commands
 cli.add_command(create_campaign)
 
-
-
 if __name__ == "__main__":
   cli()
