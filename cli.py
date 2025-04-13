@@ -1,5 +1,5 @@
 import click
-from core.campaign import launch
+from core.campaign import launch, dashboard
 from core.templates import create_template, list_templates, delete_template, view_template
 from core.company import add_client, classify, remove_client, list_clients
 from core.reporting import generate_debrief, generate_report, send_debrief, simulate_call, get_report, send_report
@@ -11,6 +11,7 @@ def cli():
 
 # Campaigning
 cli.add_command(launch)
+cli.add_command(dashboard)
 
 # Reporting
 cli.add_command(generate_debrief)
