@@ -1,4 +1,5 @@
 import click
+from data.db import DatabaseManager
 from api.requests import start_dash_server
 from data.db import *
 from . import query_email
@@ -34,6 +35,22 @@ def launch(client, template):
 @click.option('-cid', '--campaign-id', help="Stops the specified campaign", required=True, type=int)
 def stop_campaign():
   pass
+
+
+@click.command()
+@click.option('--company-name')
+@click.option('--company-email')
+@click.option('--type')
+@click.option('--start-time')
+@click.option('--end-time')
+@click.option('--status')
+@click.option('--description')
+def create_campaign(company_name, company_email, type, start_time, end_time, status, description): 
+  db_manager = DatabaseManager()
+
+  db_manager.create_campaign(company_name, company_email, type, start_time, end_time, status, description)
+
+  click.echo("Finished Creating Campaign!")
 
 @click.command()
 def dashboard():
