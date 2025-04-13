@@ -79,7 +79,7 @@ class EmailJob(BaseModel):
 #   }
 # ]
 async def start_campaign(jobs: list[EmailJob]):
-    logger.debug("Jobs received: %s", jobs)
+    #logger.debug("Jobs received: %s", jobs)
     for job in jobs:
         scheduler.add_job(
             send_email,
