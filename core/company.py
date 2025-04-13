@@ -23,7 +23,20 @@ def add_client(name: str, email: str, input_type: str, file: str):
       click.echo(f"Employee added with ID: {employee_id}")
       employee = db_manager.get_employee(employee_id)
       if employee:
-          print(f"Retrieved employee: {employee}")
+
+        dept = 0
+        if (row[7] == "Engineering"):
+          dept = (0,0)
+        if (row[7] == "HR"):
+          dept = (1,0)
+        if (row[7] == "IT"):
+          dept = (0,1)
+
+        click.echo(row)
+
+        name, classification, risk_value = predict(row[1], row[3], row[4], row[5], row[6], dept[0], dept[1], row[8])
+        click.echo(f"name={name}, classification={classification}, risk={risk_value}")
+
   db_manager.close()
   return company_id
 
@@ -36,12 +49,16 @@ def fetch_results(client: str, cid: int):
 
 @click.command()
 @click.option('-c', '--client-name', type=str, required=True)
-def classify(client_name: str) -> dict:
+def classify(client_name: str, client_id: str) -> dict:
   db_manager = DatabaseManager()
-  client_id = str(uuid.uuid4())
-  company = db_manager.get_company(client_id)
+  if not client_id:
+    company = db_manager.get_company_by_name(client_name)
+
+  db_manager.close()
   if company:
     click.echo("Retrived company: {company}")
+  else:
+    click.echo("Company Not Found")
 
 @click.command()
 @click.option('-c', '--client', type=str)
