@@ -5,7 +5,7 @@ import base64
 from io import BytesIO
 from datetime import datetime
 import re
-from data.db import DatabaseManager
+#from data.db import DatabaseManager
 
 def columns_to_rows_loop(array_2d, column_indices):
   """Selects specific columns and makes them rows in the output using a loop."""
@@ -27,16 +27,15 @@ def columns_to_rows_loop(array_2d, column_indices):
 
 # --- Configuration & Sample Data ---
 # IMPLEMENT DATA HERE FROM ACTUAL DATABASE
-def get_phishing_data(company_id):
+def get_phishing_data():
     """
     Provides sample data for the phishing test report.
     In a real scenario, this data would come from your testing platform or database.
     """
-    db_manager = DatabaseManager()
+    #db_manager = DatabaseManager()
 
-    employees = db_manager.get_employees_by_company(company_id)
-    print(employees) 
-    return
+    #employees = db_manager.get_employees_by_company(company_id)
+    #print(employees)
 
     data = {
         'Employee Name': [
@@ -162,23 +161,25 @@ def build_report_content_professional(data_df, chart_base64):
     # This section attempts to embed a PDF.
     # NOTE: Requires HTML support in the Markdown renderer (e.g., Pandoc with --self-contained or similar).
     # NOTE: The path is hardcoded above - CHANGE IT FOR YOUR SYSTEM.
-    md.append("## 1. Supporting Document\n")
+    md.append("## 1. Risk Pre-Assessment\n")
 
     # Make sure this is defined earlier in your code:
     # SUPPORTING_IMAGE_PATH = "/path/to/your/supporting_image.png"  # <<<--- USER MUST CHANGE THIS
 
-    SUPPORTING_IMAGE_PATH = "../risk_model/3d_risk_surface.png" # Example path
+    SUPPORTING_IMAGE_PATH = "3d_risk_surface.png" # Example path
 
-    if os.path.exists(SUPPORTING_IMAGE_PATH):  # Correct variable name
+    if os.path.exists(SUPPORTING_IMAGE_PATH):
         md.append("The following image provides additional context or data for this assessment:\n")
-        md.append(f'<img src="{SUPPORTING_IMAGE_PATH}" alt="Supporting Document Image" style="max-width: 100%; height: auto;" />\n')
+        
+        # Use standard Markdown syntax
+        md.append(f"![Supporting Document Image]({SUPPORTING_IMAGE_PATH})\n")
         md.append(f"\n_Source: {os.path.basename(SUPPORTING_IMAGE_PATH)}_\n")
     else:
-        md.append(f"_**Note:** The specified supporting image file was not found at the configured path:_\n")
+        md.append("_**Note:** The specified supporting image file was not found at the configured path:_\n")
         md.append(f"`{SUPPORTING_IMAGE_PATH}`\n")
         md.append("_It could not be embedded in the report._\n")
 
-    # --- Page Break After Image/Document ---
+    # Optional page break
     md.append('<div style="page-break-before: always;"></div>\n')
 
 
