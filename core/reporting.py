@@ -22,13 +22,6 @@ def send_debrief(dest: str):
 @click.command()
 @click.option('-c', '--client', type=str, required=True)
 @click.option('-cid', '--client', type=int, required=True)
-@click.option('-s', '--script', type=str, required=True)
-def simulate_call(client: str, cid: int, script: str):
-  pass
-
-@click.command()
-@click.option('-c', '--client', type=str, required=True)
-@click.option('-cid', '--client', type=int, required=True)
 @click.option('-f', '--format', type=str, required=True)
 def get_report(client: str, cid: int, format: str):
   pass

@@ -5,7 +5,7 @@ import os
 
 def convert_markdown_to_pdf(text: str):
   """Converts in-house markdown format to a pdf file to send to clients
-  
+
   Args:
     text: Markdown text to be exported
   """
