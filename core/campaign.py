@@ -1,5 +1,8 @@
 import click
 from api.requests import start_dash_server
+from data.db import *
+from . import query_email
+import subprocess
 
 @click.command()
 @click.option('-c', '--client', help='Client for launching campaign', required=True, type=str)
@@ -14,6 +17,18 @@ def launch(client, template):
 
   """
   click.echo(f"launching campaign for {client}")
+  db_manager = DatabaseManager()
+  company_id = db_manager.get_company_by_name(client)
+  if not company:
+    click.echo("Company Not Found")
+    return
+  employees = db_manager.get_employees_by_company(company_id)
+  if not employees:
+    click.echo("No employees found for this company")
+    return
+  subprocess.run(["uvicorn", "email_server:app", "--reload", "--log-level", "debug"])
+  query_email.start_campaign(campaign, employees)
+  
 
 @click.command()
 @click.option('-cid', '--campaign-id', help="Stops the specified campaign", required=True, type=int)
