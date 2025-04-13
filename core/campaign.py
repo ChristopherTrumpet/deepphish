@@ -49,14 +49,9 @@ def create_campaign(company_name, type, start_time, end_time, status, descriptio
 
   company_id = db_manager.get_company_by_name(company_name=company_name)
 
-  db_manager.create_campaign(company_id, type, start_time, end_time, status, description)
+  campaign_id = db_manager.create_campaign(company_id, type, start_time, end_time, status, description)
 
-  click.echo(get_campaigns(company_id))
-
-def get_campaigns(company_id): 
-  db_manager = DatabaseManager()
-
-  return db_manager.get_campaigns(company_id)
+  return campaign_id
 
 @click.command()
 def dashboard():
